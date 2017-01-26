@@ -1,0 +1,2 @@
+solidpython==0.2.0
+baker
