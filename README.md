@@ -16,11 +16,11 @@
 
 **3D tiling:**
 
-<img src=img/screenshot1.png>
-
-**3D top view:**
-
 <img src=img/screenshot2.png>
+
+**3D top view detail:**
+
+<img src=img/screenshot1.png>
 
 **2D control**
 
