@@ -1,9 +1,9 @@
 <table>
   <tr>
     <td colspan=2><strong>project: penrose</strong>&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href=#intro>Intro</a> |
-    <a href=#for-developers>Screenshots</a> |
-    <a href=#>Stuff</a>
+    <a href=#screenshots>screenshots</a> |
+    <a href=#features>Features</a> |
+    <a href=#resources>Resources</a>
     </td>
   </tr>
   <tr>
