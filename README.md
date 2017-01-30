@@ -4,6 +4,7 @@
     <a href=#screenshots>Screenshots</a> |
     <a href=#features>Features</a> |
     <a href=#resources>Resources</a>
+    <a href=#running-the-code>Running the Code</a>
     </td>
   </tr>
   <tr>
@@ -39,3 +40,13 @@
 * [Penrose tiling algorithm explanation](http://preshing.com/20110831/penrose-tiling-explained/)
 * [OpenSCAD cheatsheet](http://www.openscad.org/cheatsheet/)
 * [Solid docs](https://github.com/SolidCode/SolidPython)
+
+## Running the Code
+
+Running the `penrose.py` script refreshes `penrose.scad` (3d backend) and `penrose.png` (2d backend).  More specifically:
+
+```bash
+alias openscad="/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD" # for osx
+python penrose.py
+openscad penrose.scad
+```
