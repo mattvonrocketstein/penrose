@@ -3,7 +3,7 @@
     <td colspan=2><strong>Penrose</strong>&nbsp;&nbsp;&nbsp;&nbsp;
     <a href=#screenshots>Screenshots</a> |
     <a href=#features>Features</a> |
-    <a href=#resources>Resources</a>
+    <a href=#resources>Resources</a> |
     <a href=#running-the-code>Running the Code</a>
     </td>
   </tr>
