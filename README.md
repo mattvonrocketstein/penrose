@@ -1,7 +1,7 @@
 <table>
   <tr>
-    <td colspan=2><strong>project: penrose</strong>&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href=#screenshots>screenshots</a> |
+    <td colspan=2><strong>Penrose</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href=#screenshots>Screenshots</a> |
     <a href=#features>Features</a> |
     <a href=#resources>Resources</a>
     </td>
