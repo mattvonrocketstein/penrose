@@ -13,7 +13,7 @@
   </tr>
 </table>
 
-<a name=Screenshots/>
+<a name=Screenshots></a>
 ## Screenshots
 
 **3D tiling:**
@@ -28,14 +28,14 @@
 
 <img src=img/cairo.png>
 
-<a name=Features/>
+<a name=Features></a>
 ## Features
 
 * Code generation of 3D scad instructions (via [solid](https://github.com/SolidCode/SolidPython) backend)
 * Generation of triangle vertices corresponding to penrose tilings (in python)
 * 2D rendering with [cairo backend](https://pypi.python.org/pypi/cairocffi)
 
-<a name=Resources/>
+<a name=Resources></a>
 ## Resources
 
 * [Installing Python](https://www.python.org/downloads/)
@@ -44,7 +44,7 @@
 * [OpenSCAD cheatsheet](http://www.openscad.org/cheatsheet/)
 * [Solid docs](https://github.com/SolidCode/SolidPython)
 
-<a name=RunningTheCode/>
+<a name=RunningTheCode></a>
 ## Running the Code
 
 Running the `penrose.py` script refreshes `penrose.scad` (3d backend) and `penrose.png` (2d backend).  More specifically:
