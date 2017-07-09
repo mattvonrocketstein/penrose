@@ -4,7 +4,7 @@
     <a href=#Screenshots>Screenshots</a> |
     <a href=#Features>Features</a> |
     <a href=#Resources>Resources</a> |
-    <a href=#RunningtheCode>Running the Code</a>
+    <a href=#RunningTheCode>Running the Code</a>
     </td>
   </tr>
   <tr>
