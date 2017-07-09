@@ -1,4 +1,4 @@
-<table>
+<table border=1>
   <tr>
     <td colspan=2><strong>Penrose</strong>&nbsp;&nbsp;&nbsp;&nbsp;
     <a href=#screenshots>Screenshots</a> |
