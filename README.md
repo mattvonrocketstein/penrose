@@ -1,10 +1,10 @@
 <table border=1>
   <tr>
     <td colspan=2><strong>Penrose</strong>&nbsp;&nbsp;&nbsp;&nbsp;
-    <a href=#screenshots>Screenshots</a> |
-    <a href=#features>Features</a> |
-    <a href=#resources>Resources</a> |
-    <a href=#running-the-code>Running the Code</a>
+    <a href=#Screenshots>Screenshots</a> |
+    <a href=#Features>Features</a> |
+    <a href=#Resources>Resources</a> |
+    <a href=#RunningtheCode>Running the Code</a>
     </td>
   </tr>
   <tr>
@@ -13,6 +13,7 @@
   </tr>
 </table>
 
+<a name=Screenshots/>
 ## Screenshots
 
 **3D tiling:**
@@ -27,12 +28,14 @@
 
 <img src=img/cairo.png>
 
+<a name=Features/>
 ## Features
 
 * Code generation of 3D scad instructions (via [solid](https://github.com/SolidCode/SolidPython) backend)
 * Generation of triangle vertices corresponding to penrose tilings (in python)
 * 2D rendering with [cairo backend](https://pypi.python.org/pypi/cairocffi)
 
+<a name=Resources/>
 ## Resources
 
 * [Installing Python](https://www.python.org/downloads/)
@@ -41,6 +44,7 @@
 * [OpenSCAD cheatsheet](http://www.openscad.org/cheatsheet/)
 * [Solid docs](https://github.com/SolidCode/SolidPython)
 
+<a name=RunningTheCode/>
 ## Running the Code
 
 Running the `penrose.py` script refreshes `penrose.scad` (3d backend) and `penrose.png` (2d backend).  More specifically:
