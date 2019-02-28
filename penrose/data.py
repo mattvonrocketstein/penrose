@@ -32,5 +32,5 @@ NEG_UNIT_VECTORS = np.array(
     [VECTOR_NEG_X, VECTOR_NEG_Y, VECTOR_NEG_Z], dtype=np.int)
 ALL_UNIT_VECTORS = np.array(
     [VECTOR_X, VECTOR_Y, VECTOR_Z,
-        # VECTOR_XY, VECTOR_YZ,
-        VECTOR_NEG_X, VECTOR_NEG_Y, VECTOR_NEG_Z], dtype=np.int)
+     # VECTOR_XY, VECTOR_YZ,
+     VECTOR_NEG_X, VECTOR_NEG_Y, VECTOR_NEG_Z], dtype=np.int)

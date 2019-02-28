@@ -83,3 +83,50 @@ def cross3d():
          util.translate([0, 0, -1])(util.cube(1, center=True)),
          ]
     )
+
+
+def star():
+    base = util.cylinder(h=1, d1=1, d2=0)
+    base = util.union()(
+        [util.rotate([0, 180, 0])(util.translate([0, 0, 0])(base)),
+         util.translate([0, 0, 0])(base)])
+    tmp = [
+        # util.cube(.25, center=True), # anchor
+        util.translate([0, 0, -1])(
+            util.union()(
+                util.rotate([90, 90, 0])(util.translate([-1, 0, 0])(base)),
+                util.translate([0, 0, 1])(base)))]
+    tmp = util.union()(tmp)
+    tmp = util.union()(tmp, util.rotate([90, 90, 90])(tmp))
+    return tmp
+
+
+jax = star
+#
+#
+# def jjax():
+#     base = util.cylinder(h=1, d1=1, d2=0)
+#     base = util.union()(
+#         [
+#             util.rotate([0, 180, 0])(util.translate([0, 0, 0])(base)),
+#             (util.translate([0, 0, 0])(base)),
+#         ])
+#     return util.translate([0, 0, -1])(util.union()(
+#         [  # util.cube(1, center=True),
+#             util.rotate([90, 90, 0])(util.translate([-1, 0, 0])(base)),
+#             # util.translate([1, 0, 0])(base),
+#             # util.translate([0, 1, 0])(base),
+#             util.translate([0, 0, 1])(base),
+#             # util.translate([0, 0, -1])(base),
+#             # util.translate([0, -1, 0])(base),
+#         ]
+#     ))
+#     #     [util.cube(1, center=True),
+#     #      util.translate([1, 0, 0])(util.cube(1, center=True)),
+#     #      util.translate([0, 1, 0])(util.cube(1, center=True)),
+#     #      util.translate([0, 0, 1])(util.cube(1, center=True)),
+#     #      util.translate([-1, 0, 0])(util.cube(1, center=True)),
+#     #      util.translate([0, -1, 0])(util.cube(1, center=True)),
+#     #      util.translate([0, 0, -1])(util.cube(1, center=True)),
+#     #      ]
+#     # ))

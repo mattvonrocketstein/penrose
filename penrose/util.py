@@ -10,7 +10,7 @@ from solid.utils import (
 
 from solid import (
     cube, sphere,
-    union, translate, intersection,
+    union, translate, intersection, linear_extrude, minkowski,
     polygon, color,
     difference, cylinder, OpenSCADObject)
 
