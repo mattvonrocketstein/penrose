@@ -43,6 +43,7 @@
 * [Penrose tiling algorithm explanation](http://preshing.com/20110831/penrose-tiling-explained/)
 * [OpenSCAD cheatsheet](http://www.openscad.org/cheatsheet/)
 * [Solid docs](https://github.com/SolidCode/SolidPython)
+* [OpenSCAD User Manual](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/The_OpenSCAD_Language)
 
 <a name=RunningTheCode></a>
 ## Running the Code

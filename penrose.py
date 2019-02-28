@@ -1,13 +1,16 @@
 import os
-import math, random, cmath
+import math
+import random
+import cmath
 import cairocffi as cairo
 
 from solid import (
-    union, translate, cube, polygon,color,
-    difference,cylinder,OpenSCADObject)
+    union, translate, cube, polygon, color,
+    difference, cylinder, OpenSCADObject)
 from solid.utils import scad_render_to_file
 SCAD_SEGMENTS = 48
 GOLDEN_RATIO = (1 + math.sqrt(5)) / 2
+
 
 class Canvas(object):
 
@@ -16,13 +19,12 @@ class Canvas(object):
 
     def __init__(self, IMAGE_SIZE):
         """ """
-        self.IMAGE_SIZE = [IMAGE_SIZE]*2
+        self.IMAGE_SIZE = [IMAGE_SIZE] * 2
         # Prepare cairo surface
         self.surface = cairo.ImageSurface(
             cairo.FORMAT_ARGB32,
             self.IMAGE_SIZE[0], self.IMAGE_SIZE[1])
         self.cr = cairo.Context(self.surface)
-
 
     def draw_lines(self, triangles):
         # Determine line width from size of first triangle
@@ -39,7 +41,7 @@ class Canvas(object):
         self.cr.stroke()
 
     def finish(self, kolor):
-        if kolor==0:
+        if kolor == 0:
             self.cr.set_source_rgb(1.0, 0.35, 0.35)
         else:
             self.cr.set_source_rgb(0.4, 0.4, 1.0)
@@ -50,33 +52,38 @@ class Canvas(object):
         self.render_scad(triangles)
 
     def render_scad(self, triangles):
-        triangle_points=[
+        triangle_points = [
             [
                 [C.real, C.imag],
                 [A.real, A.imag],
                 [B.real, B.imag],
-            ] for kolor, A, B, C in triangles ]
+            ] for kolor, A, B, C in triangles]
         print triangles[0]
         print triangle_points[0]
         objects = [
-            OpenSCADObject('polygon',{'points': x}) for x in triangle_points
-        ]
-        for i,obj in enumerate(objects):
-            if i%2==0:
-                obj = color('black')(obj)
-            else:
-                obj = color('white')(obj)
-            objects[i]=obj
 
-        obj =  union()(*objects)
+            OpenSCADObject('polygon', {'points': x}) for x in triangle_points
+        ]
+        for i, obj in enumerate(objects):
+            if i % 2 == 0:
+                # obj = color('black')(obj)
+                pass
+            else:
+                obj = color('black')(obj)
+                objects[i] = obj
+            # objects[i] = obj
+
+        obj = union()(cube(1), *objects)
         self.save_scad(obj)
 
-    def render_cairo(self,triangles=[]):
+    def render_cairo(self, triangles=[]):
         """ """
         self.cr.translate(
             self.IMAGE_SIZE[0] / 2.0,
             self.IMAGE_SIZE[1] / 2.0)
-        wheelRadius = 1.2 * math.sqrt((self.IMAGE_SIZE[0] / 2.0) ** 2 + (self.IMAGE_SIZE[1] / 2.0) ** 2)
+        wheelRadius = 1.2 * \
+            math.sqrt((self.IMAGE_SIZE[0] / 2.0) **
+                      2 + (self.IMAGE_SIZE[1] / 2.0) ** 2)
         self.cr.scale(wheelRadius, wheelRadius)
 
         # Draw triangles
@@ -95,7 +102,8 @@ class Canvas(object):
             lambda fname: self.surface.write_to_png(fname),
             self.out_png
         )
-    def save_scad(self,objects):
+
+    def save_scad(self, objects):
         """ """
         self._save(
             lambda fname: scad_render_to_file(
@@ -129,24 +137,28 @@ def subdivide(triangles):
             result += [(1, R, C, A), (1, Q, R, B), (0, R, Q, A)]
     return result
 
+
 def tiling():
     # Create wheel of red triangles around the origin
     triangles = []
     for i in xrange(10):
-        B = cmath.rect(1, (2*i - 1) * math.pi / 10)
-        C = cmath.rect(1, (2*i + 1) * math.pi / 10)
+        B = cmath.rect(1, (2 * i - 1) * math.pi / 10)
+        C = cmath.rect(1, (2 * i + 1) * math.pi / 10)
         if i % 2 == 0:
             B, C = C, B  # Make sure to mirror every second triangle
         triangles.append((0, 0j, B, C))
     return triangles
+
+
 def elaborate(triangles, num_subdivisions):
     # Perform subdivisions
     for i in xrange(num_subdivisions):
         triangles = subdivide(triangles)
     return triangles
 
-if __name__=='__main__':
-    num_subdivisions= 6
+
+if __name__ == '__main__':
+    num_subdivisions = 6
     canvas = Canvas(1000)
     triangles = tiling()
     triangles = elaborate(triangles, num_subdivisions)
