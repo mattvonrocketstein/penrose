@@ -2,6 +2,7 @@
 #
 ##
 
+from solid.solidpython import OpenSCADObject
 import os
 import datetime
 from penrose import util
@@ -9,6 +10,17 @@ from penrose import util
 LOGGER = util.get_logger(__name__)
 
 SCAD_BIN_DEFAULT = '/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD'
+
+
+class _hexagon(OpenSCADObject):
+    def __init__(self, size=None, height=None):
+        # super(hexagon, self).__init__(name, params)
+        OpenSCADObject.__init__(self, 'hexagon',
+                                {'size': size, 'height': height})
+
+
+def hexagon(size, height):
+    return util.union()(_hexagon(size, height))
 
 
 class Collection(object):
@@ -60,7 +72,7 @@ class Collection(object):
     def union(self):
         return util.union()(self.objects)
 
-    def render(self):
+    def render(self, lib=''):
         """ """
         result = self.union
         print util.scad_render(result)
@@ -68,7 +80,7 @@ class Collection(object):
         util.scad_render_to_file(
             result, self.fname,
             include_orig_code=False,
-            file_header='$fn = %s;' % self.SCAD_SEGMENTS)
+            file_header=lib + '$fn = %s; ' % self.SCAD_SEGMENTS)
         return self.save()
 
 

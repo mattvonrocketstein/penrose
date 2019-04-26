@@ -20,7 +20,8 @@ class Transmogrifier(object):
                 self.base = base
         else:
             self.base = CUBE1
-        self.unit = self.base.params.get('size', 1)
+        params = getattr(self.base, 'params', None)
+        self.unit = params and params.get('size', 1) or 1
 
     @property
     def debug(self):
