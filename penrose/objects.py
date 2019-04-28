@@ -11,16 +11,82 @@ LOGGER = util.get_logger(__name__)
 
 SCAD_BIN_DEFAULT = '/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD'
 
+# headers from: lib/shapes.scad
+HEADERS = """box(width, height, depth);
+roundedBox(width, height, depth, radius);
+cone(height, radius);
+ellipticalCylinder(width, height, depth);
+ellipsoid(width, height);
+hexagon(height, depth);
+octagon(height, depth);
+dodecagon(height, depth);
+hexagram(height, depth);
+rightTriangle(adjacent, opposite, depth);
+equiTriangle(side, depth);
+12ptStar(height, depth);""".split(';')
+# tube(height, radius, wall, center = false);
+# tube2(height, ID, OD, center = false);
+# ovalTube(width, height, depth, wall, center = false);
 
-class _hexagon(OpenSCADObject):
-    def __init__(self, size=None, height=None):
-        # super(hexagon, self).__init__(name, params)
-        OpenSCADObject.__init__(self, 'hexagon',
-                                {'size': size, 'height': height})
 
+# class shapes(object):
+#     pass
+#
+#
+# HEADERS = filter(None, [x.strip() for x in HEADERS])
+# for line in HEADERS:
+#     name = line[:line.find('(')].strip()
+#     args = line[line.find('(') + 1:line.find(')')]
+#     args = [x.strip() for x in args.split(',')]
+#     fxn = eval(
+#         "lambda {}: util.union()(_{}({}))".format(
+#             ",".join(args), name,
+#             ",".join(args)
+#         ))
+#     import new
+#     kls = type(
+#         '_{}'.format(name),
+#         (OpenSCADObject,),
+#         {'__init__':
+#             classmethod(
+#                 lambda himself, **kwargs:
+#                     OpenSCADObject.__init__(himself, name, kwargs),
+#             )
+#          })()
+#     setattr(shapes, '_{}'.format(name), kls)
+#     setattr(shapes, name, fxn)
 
 def hexagon(size, height):
     return util.union()(_hexagon(size, height))
+
+
+class _hexagon(OpenSCADObject):
+    def __init__(self, size=None, height=None):
+        OpenSCADObject.__init__(
+            self, 'hexagon',
+            dict(size=None, height=None))
+
+
+def octagon(size, height):
+    return util.union()(_octagon(size, height))
+
+
+class _octagon(OpenSCADObject):
+    def __init__(self, size=None, height=None):
+        OpenSCADObject.__init__(
+            self, 'octagon',
+            dict(size=size, height=height))
+
+
+def roundedBox(width=None, height=None, depth=None, radius=None):
+    return util.union()(_roundedBox(width=width, height=height, depth=depth, radius=radius))
+
+
+class _roundedBox(OpenSCADObject):
+    def __init__(self, width=None, height=None, depth=None, radius=None):
+        OpenSCADObject.__init__(
+            self, 'roundedBox',
+            dict(width=width, height=height, depth=depth, radius=radius))
 
 
 class Collection(object):
