@@ -13,6 +13,12 @@
   </tr>
 </table>
 
+<a name=References></a>
+## References
+
+* https://pypi.org/project/numpy-stl/
+* https://github.com/phistrom/mesh2img
+
 <a name=Screenshots></a>
 ## Screenshots
 

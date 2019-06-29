@@ -12,7 +12,7 @@ LOGGER = util.get_logger(__name__)
 
 if __name__ == '__main__':
     main = Transmogrifier(
-        base=cross3d()).simple_symmetric_compound(iterations=3)
+        base=cross3d()).simple_symmetric_compound(iterations=1)
     main = main
     main = Collection(main)
     main.render()

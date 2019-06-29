@@ -26,7 +26,8 @@ setup(
     entry_points={
         'console_scripts':
         [
-            'penrose = {}.bin.main:entry'.format(PACKAGE_NAME),
+            'penrose = {}.bin:main'.format(PACKAGE_NAME),
+            # 'stl = {}.bin._stl:entry'.format(PACKAGE_NAME),
         ]},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',

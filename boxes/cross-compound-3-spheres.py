@@ -11,7 +11,7 @@ LOGGER = util.get_logger(__name__)
 
 if __name__ == '__main__':
     base = cross3d()
-    triple = Transmogrifier(base=base).simple_symmetric_compound(iterations=3)
+    triple = Transmogrifier(base=base).simple_symmetric_compound(iterations=2)
     main = Transmogrifier(base=triple).chomp(SPHERE1, scale=1)
     main = Collection(main)
     main.render()
