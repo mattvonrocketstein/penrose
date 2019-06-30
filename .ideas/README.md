@@ -12,10 +12,10 @@
 ## Index
 
 * [Fibbonacci #1: Scale, Prune, Shift](#fibbonacci-1)
-* [Accoustic panel](#acoustic-1)
+* [Accoustic panel](#acoustic-panel)
 
 
-<a name=acoustic-panel>
+<a name="acoustic-panel">
 
 ## Face slices as Acoustic Paneling
 
@@ -30,7 +30,7 @@
 
 2. Save a suitable model for the slice, find vendor to laser cut the out of foam
 
-<a name=fibbonacci-1>
+<a name="fibbonacci-1">
 
 ## Fibbonacci #1: Scale, Prune, Shift
 
