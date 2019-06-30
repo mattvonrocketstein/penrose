@@ -16,6 +16,7 @@
 
 
 <a name=acoustic-panel>
+
 ## Face slices as Acoustic Paneling
 
 
