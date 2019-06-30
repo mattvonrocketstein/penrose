@@ -23,6 +23,10 @@
 
 <a href=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot00.png><img src=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot00.png></a>
 
+<a href=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot01.png><img src=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot01.png></a>
+
+<a href=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot02.png><img src=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot02.png></a>
+
 2. Save a suitable model for the slice, find vendor to laser cut the out of foam
 
 <a name=fibbonacci-1>
