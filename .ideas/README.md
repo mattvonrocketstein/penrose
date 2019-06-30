@@ -28,14 +28,16 @@
 
 <a href=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot02.png><img src=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot02.png></a>
 
-2. Save a suitable model for the slice, find vendor to laser cut the out of foam
+2. Save a suitable model for the slice, find vendor to laser cut them out of foam.  
+3. Try flattening the mesh, find a vendor who can burn the 2d-projection of the face into marble/ceramic floor tiles.
 
 <a name="fibbonacci-1">
 
 ## Fibbonacci #1: Scale, Prune, Shift
 
 
-This describes a mobile / chandelier, or a heavy wall hanging of flat panels that project out into the Z axis
+This describes a puzzle looking mobile / chandelier, or a heavy wall hanging of flat panels that project out into the Z axis.  
+Bonus, the individual panels could also be used as stencils for a large geometric mural
 
 1. Pick any rectangle of the plane tiling below.  
 
