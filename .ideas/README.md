@@ -9,8 +9,28 @@
   </tr>
 </table>
 
+## Index
+
+* [Fibbonacci #1: Scale, Prune, Shift](#fibbonacci-1)
+* [Accoustic panel](#acoustic-1)
+
+
+<a name=acoustic-panel>
+## Face slices as Acoustic Paneling
+
+
+1. Slice a interesting face out of an object like one of these:
+
+<a href=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot00.png><img src=https://raw.githubusercontent.com/mattvonrocketstein/penrose/meshlab/img/screenshots/meshlab/snapshot00.png></a>
+
+2. Save a suitable model for the slice, find vendor to laser cut the out of foam
+
+<a name=fibbonacci-1>
 
 ## Fibbonacci #1: Scale, Prune, Shift
+
+
+This describes a mobile / chandelier, or a heavy wall hanging of flat panels that project out into the Z axis
 
 1. Pick any rectangle of the plane tiling below.  
 
