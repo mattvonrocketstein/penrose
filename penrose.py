@@ -41,17 +41,23 @@ class Canvas(object):
         self.cr.stroke()
 
     def finish(self, kolor):
+        """
+        """
         if kolor == 0:
-            self.cr.set_source_rgb(1.0, 0.35, 0.35)
+            self.cr.set_source_rgb(0, 0, 0)
         else:
-            self.cr.set_source_rgb(0.4, 0.4, 1.0)
+            self.cr.set_source_rgb(1, 1, 1)
         self.cr.fill()
+        # import IPython; IPython.embed()
+        # raise Exception("bonk")
 
     def render(self, triangles):
         self.render_cairo(triangles)
         self.render_scad(triangles)
 
     def render_scad(self, triangles):
+        """
+        """
         triangle_points = [
             [
                 [C.real, C.imag],
@@ -124,6 +130,8 @@ class Canvas(object):
 
 
 def subdivide(triangles):
+    """
+    """
     result = []
     for kolor, A, B, C in triangles:
         if kolor == 0:
