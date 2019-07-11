@@ -6,3 +6,4 @@ termcolor==1.1.0
 backports.functools-lru-cache==1.5
 functools32==3.2.3.post2
 termcolors
+coloredlogs

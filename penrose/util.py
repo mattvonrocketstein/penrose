@@ -18,6 +18,7 @@ import subprocess
 import termcolor
 import functools32
 bold = functools32.partial(termcolor.colored, attrs=['bold'])
+
 def get_logger(name):
     formatter = logging.Formatter(
         fmt="[%(asctime)s] - %(name)s - %(message)s",
