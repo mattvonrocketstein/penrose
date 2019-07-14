@@ -9,7 +9,8 @@
   </tr>
   <tr>
     <td width=15%><img src=img/openscad.png style="width:50px"></td>
-    <td>Experiments and demonstrations involving plane tilings, 3d solid geometry, Python and OpenSCAD</td>
+    <td>Experiments and demonstrations involving plane tilings, 3d solid geometry,
+    Python, OpenSCAD, Houdini, Meshlab, etc</td>
   </tr>
 </table>
 
@@ -32,8 +33,37 @@
 
 * https://docs.blender.org/manual/en/latest/render/workflows/command_line.html
 
+## Quick Start
+
 ```
+## Prereqs:
+## Make sure we can reach external tools.
 echo "alias blender=/Applications/Blender/blender.app/Contents/MacOS/blender" >> ~/.bash_profile
+echo "alias openscad=/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD" >> .bash_pofile
+echo "export HBIN=/Applications/Houdini//Houdini17.5.293/Frameworks/Houdini.framework/Versions/Current/Resources/bin" >> .bash_profile'
+echo "export PATH=${PATH}:/Applications/Houdini//Houdini17.5.293/Frameworks/Houdini.framework/Versions/Current/Resources/bin" >> .bash_profile'
+
+## Bootstrap: (Note that houdini itself requires py2)
+$ git clone --recursive  git@github.com:mattvonrocketstein/penrose.git
+$ cd  penrose
+$ mkvirtualenv  penrose --python python2
+$ workon penrose
+$ pip install -r requirements.txt
+$ python setup.py develop
+
+## Penrose Wrappers:
+## simplify launching frameworks with penrose-as-library
+## preconfigured, plus startup script
+$ penrose houdini ./houdini/demo-1.py
+$ penrose blender ./blender/demo-1.py
+$ penrose meshlab ./meshlab/demo-1.py
+$ penrose openscad ./blender/demo-1.py
+
+# or equivalently
+$ penrose hx ./houdini/demo-1.py
+$ penrose bx ./blender/demo-1.py
+$ penrose mx ./meshlab/demo-1.py
+$ penrose scad ./openscad/demo-1.py
 ```
 
 <a name=Screenshots></a>

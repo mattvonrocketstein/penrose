@@ -1,9 +1,19 @@
+#
+#
+#
+functools32
 solidpython==0.2.0
 click
 numpy-stl==2.10.1
 stl==0.0.3
 termcolor==1.1.0
-backports.functools-lru-cache==1.5
-functools32==3.2.3.post2
+backports.functools_lru_cache; python_version < '3.0'
 termcolors
 coloredlogs
+click
+solid
+# 'autopep8', 'flake8',
+# 'termcolor',
+# 'pyyaml',
+# 'click==6.6',
+# 'repoze.lru == 0.7',

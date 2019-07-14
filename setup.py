@@ -5,12 +5,7 @@ from setuptools import setup, find_packages
 
 PACKAGE_NAME = 'penrose'
 REQUIREMENTS = [
-    # also using requirements.txt
-    'autopep8', 'flake8',
-    'termcolor',
-    'pyyaml',
-    'click==6.6',
-    'repoze.lru == 0.7',
+    # using requirements.txt
 ]
 setup(
     name=PACKAGE_NAME,
@@ -27,6 +22,7 @@ setup(
         'console_scripts':
         [
             'penrose = {}.bin:main'.format(PACKAGE_NAME),
+            'dorothy = {}.bin:dorothy'.format(PACKAGE_NAME),
             # 'stl = {}.bin._stl:entry'.format(PACKAGE_NAME),
         ]},
     classifiers=[

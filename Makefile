@@ -23,22 +23,27 @@ BLBIN:=/Applications/Blender/blender.app/Contents/MacOS/
 PATH:=$(value PATH):${HBIN}:${BLBIN}
 export PATH
 
-# panic-%:
-# panic: panic-blender panic-houdini
-
-hou: #panic
-	echo $$PATH
-	ps aux \
-	| grep -i houdini \
+panic-%:
+	export output=$$(ps aux|grep -i ${*} \
 	| grep -v grep \
-	| awk '{print $$2}' \
-	| xargs -n1 -I% echo kill -KILL % \
-	|| true
-	# export PATH="${HBIN}:$${PATH}";
-	houdini \
-	-desktop Technical \
-	waitforui \
-	./houdini/lib.py
+	| awk '{print $$2}' |  xargs -I % -n 1 bash -x -c 'kill -KILL %') \
+	||  true
+
+
+panic: panic-blender panic-houdini
+
+conf:
+	hconfig
+
+hou: test panic-houdini
+	penrose hx ./houdini/demo-1.py
+
+test:
+	export output=$$(! flake8 ./penrose/dorothy.py | grep 'Error\|E112') \
+	; export status=$$? \
+	; echo $$output \
+	; exit $$status
+
 blend:
 	path=${SRC_ROOT}/blender/lib.py \
 	make blendr
