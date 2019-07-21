@@ -20,101 +20,65 @@ demo_root = os.path.join(os.getcwd(), "houdini")
 input_root = os.path.join(demo_root, 'input')
 output_root = os.path.join(demo_root, 'output')
 
-LOGGER = util.get_logger(__name__)
+LOGGER = util.get_logger(__file__)
 
-## setup framework, workspace, geometry
+LOGGER.debug("setup framework, workspace, geometry")
 workspace = Workspace()
 workspace.init()
-geo_engine = Geometry()
+geo_engine = Geometry(unit=10)
 
-## unpack tree
-obj = geo_engine.obj
+LOGGER.debug("unpack tree")
+tree = geo_engine.tree
 
-## load data
-stl_file =  os.path.join(input_root, "demo-1.stl")
-stl = geo_engine.load(
-    filename=stl_file, into='stl',
-    under=geo_engine.obj)
+LOGGER.debug("load data")
+stl_file =  os.path.join(input_root, "demo-1.bstl")
+stl = geo_engine.load(filename=stl_file, into='stl')
+LOGGER.debug("done loading data")
 
-rows = geo_engine.get_grid(
-    x=3, y=2, obj=stl,
-    offset=1.25, )
-# geo_engine.bbox(rows[0][0])
-# rows = [] \
-#     + obj_run(n=1, obj=stl, num_cols=num_cols, offset=offset) \
-#     + obj_run(n=2,  obj=stl,num_cols=num_cols, offset=offset)
-# bottom = geo_engine.copy_node(stl, into='bottom', count=num_cols)
-# [   obj.setParmTransform(hou.hmath.buildTranslate(
-#         base['x'] + (-1**i) * (offset*i),
-#         base['y'] - offset,
-#         base['z']))
-#     for i,obj in enumerate(bottom)  ]
-# top = geo_engine.copy_node(stl, into='top', count=num_cols)
-# [ obj.setParmTransform(hou.hmath.buildTranslate(
-#         base['x'] + (-1**i) * (offset*i),
-#         base['y'] + offset,
-#         base['z']))
-#     for i, obj in enumerate(top)  ]
+LOGGER.debug("building grid from original")
+ng1 = node.NodeArray.create_from(
+    obj=stl, count=2,
+    container=node.Node(into='stl-copies'))
+# ng1 = [ stl.copy(into='{}-{}'.format(stl.name, i)) for i in range(2) ]
+ng1.map_enum(lambda i,x: x.right(i * 1.25))
+ng1.container.right(geo_engine.unit)
 
-umbrella = node.create(
-    under=geo_engine.obj,
-    into='umbrella', type='geo')
+ng2 = ng1.copy()
+ng2.map_enum(lambda i,x: x.left(i * 1.25))
+ng2.container.left(geo_engine.unit)
+# opparm
+# https://www.sidefx.com/forum/topic/10888/
+# [ _node.node.setNextInput(container) for _node in ng1 ]
+# ng1.move_under(container)
+    # x=3, y=2, obj=stl,
+    # offset=1.25, )
 
-# rows = top + middle + bottom
-# rows = top + bottom
-for x, row in enumerate(rows):
-    for y, _node in enumerate(row):
-        _node.setNextInput(umbrella)
-        geo = _node.children()[0].geometry()
-        bbox = geo.boundingBox()
-        center=bbox.center()
-        rows[x][y] = dict(
-            node=_node, x=x, y=y,
-            center=center)
-        # https://www.sidefx.com/docs/houdini/hom/hou/BoundingBox.html https://www.sidefx.com/forum/topic/49734/ https://www.sidefx.com/forum/topic/11472/?page=1#post-54958
-        # create points at bounding box corners:
-        a = bbox.minvec()
-        b = (bbox.minvec()[0], bbox.maxvec()[1], bbox.minvec()[2])
-        c = (bbox.maxvec()[0], bbox.maxvec()[1], bbox.minvec()[2])
-        d = (bbox.maxvec()[0], bbox.minvec()[1], bbox.minvec()[2])
-        e = bbox.maxvec()
-        f = (bbox.maxvec()[0], bbox.minvec()[1], bbox.maxvec()[2])
-        g = (bbox.minvec()[0], bbox.minvec()[1], bbox.maxvec()[2])
-        h = (bbox.minvec()[0], bbox.maxvec()[1], bbox.maxvec()[2])
-        corners = [a,b,c,d,e,f,g,h]
-        print("corners: {}".format(corners))
-        # for i, position in enumerate(corners):
-        #     point = node.create(type='geo').children()[0].geometry().createPoint()
-        #     point.setPosition(position)
+# umbrella = Node(into='umbrella')
 
-# nx = hou.ObjNode.origin(umbrella)
-# umbrella.setParmTransform(
-#     hou.hmath.buildTranslate(
-#         nx.x(),nx.y(),nx.z()))
+# ng1.set_input(umbrella)
+# umbrella2 = umbrella.copy(into='umbrella2')
 
-umbrella2 = geo_engine.copy_node(
-    umbrella, into='umbrella2')
-
-# setup cameras
+LOGGER.debug("setup cameras")
 o_cam, x_cam,  y_cam, z_cam = \
-    workspace.default_cameras(unit=10, focus=stl)
+    geo_engine.default_cameras(focus=stl)
 
-stl.destroy()
+# stl.destroy()
 
-# adjust layout for generated objects
+LOGGER.debug("adjust layout for generated objects")
 workspace.organize()
 
-# useful handles for UI
+LOGGER.debug("useful handles for UI")
 tabs = workspace.tabs()
 vport = workspace.get_viewport()
 
-## adjust viewport
-vport.homeAll() # vport.setCamera(z_cam.name())
+LOGGER.debug("adjust viewport")
+vport.homeAll()
+# vport.setCamera(z_cam.name())
 # workspace.python_mode(max=True)
 # __file__ is not available inside houdini runtime >:/
 workspace.set_status_msg(__file__)
 
-try:
-    network_ed = tabs['NetworkEditor']
-except KeyError:
-    LOGGER.debug("could not resolve `NetworkEditor` tab")
+# try:
+#     network_ed = tabs['NetworkEditor']
+# except KeyError:
+#     LOGGER.debug("could not resolve `NetworkEditor` tab")

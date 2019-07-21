@@ -19,3 +19,4 @@ class Loggable(object):
             name or self.__class__.__name__)
         self.logger_name = logger_name
         self.logger = util.get_logger(self.logger_name)
+        self.logger.debug("logging initialized")

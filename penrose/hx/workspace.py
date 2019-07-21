@@ -7,7 +7,7 @@ import stateutils
 
 from penrose import (util,)
 from penrose.hx.abcs import HWrapper
-from .node import (create_node,)
+from .node import (Node,)
 
 LOGGER = util.get_logger(__name__)
 
@@ -39,35 +39,6 @@ class Workspace(HWrapper):
         """
         """
         return self.obj.layoutChildren()
-
-    def create_camera(self, into=None, xform=None, under=None, focus=None):
-        """ """
-        assert all([focus, xform, under])
-        cam = create_node(under=under, into=into, type='cam')
-        cam.setParmTransform(xform)
-        cam.setWorldTransform(cam.buildLookatRotation(focus))
-        return cam
-
-    def default_cameras(self, unit=None,  under=None, focus=None):
-        """
-        x_cam,  y_cam, z_cam = workspace.default_cameras(unit=8.5)
-        """
-        assert unit
-        units = [
-            [0,    0, 0],
-            [unit, 0, 0],
-            [0, unit, 0],
-            [0, 0, unit], ]
-        units = map(tuple, units)
-        units = map(hou.hmath.buildTranslate, units)
-        under = under or self.obj
-        assert under
-        cam_kwargs = dict(under=under, focus=focus)
-        return [
-            self.create_camera(into='o_cam', xform=units[0], **cam_kwargs),
-            self.create_camera(into='x_cam', xform=units[1], **cam_kwargs),
-            self.create_camera(into='y_cam', xform=units[2], **cam_kwargs),
-            self.create_camera(into='z_cam', xform=units[3], **cam_kwargs), ]
 
     @property
     def panes(self):

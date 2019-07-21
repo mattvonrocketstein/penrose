@@ -1,5 +1,6 @@
 from penrose import (util,)
 
+
 def panic(**kwargs):
     """ stop all engines """
     util.invoke(cmd=("ps aux "

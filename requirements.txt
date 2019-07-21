@@ -19,3 +19,4 @@ solid
 # 'repoze.lru == 0.7',
 IPython
 rrpyc
+pygments

@@ -18,17 +18,31 @@ import logging
 import subprocess
 import termcolor
 import functools32
+
+from pygments import highlight
+from pygments.lexers import PythonLexer
+from pygments.formatters import TerminalFormatter
+
+PY_LEX = PythonLexer()
+PY_FMT = TerminalFormatter()
+
 bold = functools32.partial(termcolor.colored, attrs=['bold'])
 
 
-def get_logger(name):
+def hash(msg):
+    """ """
+    import hashlib
+    return hashlib.md5(msg).hexdigest()
+
+
+def get_logger(name, handler=None):
+    handler = handler or logging.StreamHandler()
     formatter = logging.Formatter(
         fmt="[%(asctime)s] - %(name)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S")
-    log_handler = logging.StreamHandler()
-    log_handler.setFormatter(formatter)
+    handler.setFormatter(formatter)
     logger = logging.getLogger(name)
-    logger.addHandler(log_handler)
+    logger.addHandler(handler)
     logger.setLevel('DEBUG')
     return logger
 
@@ -53,6 +67,7 @@ else:
     def indent(text, amount=2, ch=' '):
         return textwrap.indent(text, amount * ch)
 
+
 def invoke(cmd=None, stdin='', interactive=False, large_output=False, log_command=True, environment={}, log_stdin=True, system=False):
     """
     replacement for invoke module, which isn't great with pipes
@@ -76,7 +91,7 @@ def invoke(cmd=None, stdin='', interactive=False, large_output=False, log_comman
     exec_kwargs = dict(shell=True, )
     if stdin:
         msg = "command will receive pipe:\n{}"
-        log_stdin and LOGGER.debug(msg.format(blue(indent(stdin))))
+        log_stdin and LOGGER.debug(msg.format(indent(stdin)))
         exec_kwargs.update(
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
@@ -104,3 +119,8 @@ def invoke(cmd=None, stdin='', interactive=False, large_output=False, log_comman
     exec_cmd.success = exec_cmd.succeeded
     exec_cmd.failure = exec_cmd.failed
     return exec_cmd
+
+
+def highlight_code(code):
+    """ """
+    return highlight(code, PY_LEX, PY_FMT)

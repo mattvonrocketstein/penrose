@@ -2,6 +2,8 @@
 """
 """
 from __future__ import absolute_import
+from penrose.hx import api as hx_api
+from penrose.hx.engine import Engine
 import os
 import sys
 
@@ -16,10 +18,9 @@ import time
 
 LOGGER = penrose.util.get_logger(__name__)
 
-from penrose.hx.engine import Engine
-from penrose.hx import api as hx_api
 
 ENGINE = Engine()
+
 
 @click.command(cls=cli.Group)
 def main(*args, **kargs):
