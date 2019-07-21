@@ -1,37 +1,10 @@
 """ penrose.hx:
-        houdini related code
+        houdini related code.
+        safe imports here only..
+        implementors should import other needed submodules
+        directly, anything below this cannot run in a python
+        env that's disconnected from the houdini engine
 """
-# import hou
-# import toolutils
-# import stateutils
-
 from penrose import (util,)
 
-from .framework import Framework
-from .geometry import Geometry
-from .workspace import Workspace
-
 LOGGER = util.get_logger(__name__)
-
-__all__ = [
-    Framework, Geometry, Workspace
-]
-
-#
-# def get_nodes():
-#     return [n for n in hou.node('/').allSubChildren()]
-#
-#
-# def print_tree(node, indent=0):
-#     """ """
-#     for child in node.children():
-#         LOGGER.debug(" " * indent + child.name())
-#         print_tree(child, indent + 3)
-#
-#
-# def describe_nodes():
-#     print_tree(hou.node('/'))
-#     nodes = ["{} ({})".format(n.name(),  n.type().name(), )
-#              for n in get_nodes()]
-#     # hou.ui.displayMessage('\n'.join(nodes))
-#     LOGGER.debug(nodes)

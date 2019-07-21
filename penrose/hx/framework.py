@@ -3,8 +3,12 @@
 """
 # import toolutils,stateutils,
 
+import time
+
+import rpyc
+
 from penrose import (util,)
-from penrose.abcs.hx import Universe
+from penrose.hx.abcs import HWrapper
 
 LOGGER = util.get_logger(__name__)
 
@@ -28,10 +32,10 @@ def get_conn():
         raise Exception('no conn')
     return conn
 
-class Framework(Universe):
+class Framework(HWrapper):
 
     def init(self):
         """ """
-        # deprecated 
+        # deprecated
         import hrpyc
         hrpyc.start_server(use_thread=True, quiet=False)

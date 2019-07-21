@@ -28,33 +28,23 @@ normalize:
 	| grep [.]py$ \
 	| xargs autopep8 --in-place
 
-clean: panic clean-pyc
-demo: 
-	penrose hx houdini/demo-1.py
 
 clean-pyc:
 	find .|grep [.]pyc|xargs rm
+clean: panic clean-pyc
 
-panic-%:
-	export output=$$(ps aux|grep -i ${*} \
-	| grep -v grep \
-	| awk '{print $$2}' |  xargs -I % -n 1 bash -x -c 'kill -KILL %') \
-	||  true
+demo:
+	penrose hx houdini/demo-1.py
 
-
-panic: panic-blender panic-houdini
+panic:
+	penrose panic
 
 conf:
-	hconfig
-
-hou: test panic-houdini
-	penrose hx ./houdini/demo-1.py
+	penrose config
+	# hconfig
 
 test:
-	export output=$$(! flake8 ./penrose/hx.py | grep 'Error\|E112') \
-	; export status=$$? \
-	; echo $$output \
-	; exit $$status
+	penrose hx-test
 
 blend:
 	path=${SRC_ROOT}/blender/lib.py \

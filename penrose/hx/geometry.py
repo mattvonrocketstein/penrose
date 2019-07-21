@@ -2,16 +2,17 @@
         houdini geometry wrapper
 """
 import os
+
 import hou
 
 from penrose import (util,)
-from penrose.abcs.hx import Universe
+from penrose.hx.abcs import HWrapper
 from .node import (create_node,)
 
 LOGGER = util.get_logger(__name__)
 
 
-class Geometry(Universe):
+class Geometry(HWrapper):
 
     def __init__(self, name='default', **kwargs):
         self.name = name

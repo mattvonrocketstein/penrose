@@ -6,13 +6,13 @@ import toolutils
 import stateutils
 
 from penrose import (util,)
-from penrose.abcs.hx import Universe
+from penrose.hx.abcs import HWrapper
 from .node import (create_node,)
 
 LOGGER = util.get_logger(__name__)
 
 
-class Workspace(Universe):
+class Workspace(HWrapper):
     def __init__(self, **kwargs):
         self.scene_viewer = stateutils.findSceneViewer()
 

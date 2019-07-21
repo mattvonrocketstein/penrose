@@ -10,6 +10,7 @@ import functools32
 
 import penrose
 from penrose import (cli, util,)
+from penrose.hx.util import get_env
 import rpyc
 import time
 
@@ -36,19 +37,7 @@ if venv:
         print "  + {}".format(path)
         sys.path.append(path)"""
 
-# placeholder
-# placeholder placeholder
-CODE_LOAD_SCRIPT = """import os
-namespace  = dict(__file__ = '{file}')
-execfile('{file}', namespace, namespace)
-print 'done with running script @{file}'
-from penrose import hx
-hx.SCRIPT = namespace
-print 'exporting script execution namespace to var `hx.SCRIPT`'
-"""
 
-# these will be imported locally after rpyc is setup
-REMOTE_MODULES = 'hou hrpyc toolutils stateutils'.split()
 
 # @main.command(name='stl-render', help='show')
 # @click.option('--verbose', help='set logger to DEBUG', default=False, is_flag=True)
@@ -102,6 +91,8 @@ REMOTE_MODULES = 'hou hrpyc toolutils stateutils'.split()
 #         stl_mesh.rotate(rotation_axises, math.radians(angle))
 #         stl_mesh.save(file)
 
+from penrose.hx.engine import Engine
+ENGINE = Engine()
 
 @click.command(cls=cli.Group)
 def main(*args, **kargs):
@@ -117,57 +108,6 @@ def main(*args, **kargs):
 
 
 CliWrapper = functools32.partial(cli.CliWrapper, entry=main,)
-
-def get_env():
-    """ """
-    ENV = dict(
-        HFS='/Applications/Houdini/Houdini17.5.293/Frameworks/Houdini.framework/Versions/Current/Resources',
-        # HOUDINI_DESKTOP_DIR = os.path.expanduser('~/Desktop'),
-        HOUDINI_DESKTOP_DIR=os.path.expanduser('/tmp'),
-        HOUDINI_OS='MacOS',
-        HOUDINI_TEMP_DIR='/tmp/houdini_temp',
-        HOUDINI_USER_PREF_DIR=os.path.expanduser(
-            '~/Library/Preferences/houdini/17.5'),
-        BLBIN='/Applications/Blender/blender.app/Contents/MacOS/',
-    )
-    ENV.update(
-        HSITE=os.path.join(ENV['HFS'], "site"),
-        HBIN=os.path.join(ENV['HFS'], "bin"),
-    )
-    used_defaults = []
-    for var_name, default in ENV.items():
-        if var_name in os.environ:
-            msg = "var `{}` is present in env, using value: '{}'"
-            ENV[var_name] = os.environ[var_name]
-            LOGGER.debug(msg.format(var_name, ENV[var_name]))
-        else:
-            used_defaults.append(var_name)
-            msg = "var `{}` is missing from env, using default: '{}'"
-            LOGGER.debug(msg.format(var_name, ENV[var_name]))
-    if used_defaults:
-        LOGGER.warning(
-            "defaults were used for all of {}, "
-            "this probably isn't right for your setup..".format(used_defaults))
-    ENV.update(
-        PATH="{}:{}:{}".format(
-            os.environ['PATH'],
-            ENV["HBIN"], ENV["BLBIN"],)
-    )
-    return ENV
-
-def hexec(code, conn=None):
-    """
-    exec python on the houdini engine
-    """
-    from penrose.hx import framework
-    conn = conn or framework.get_conn()
-    code_hash=id(code)
-    LOGGER.debug("executing on engine: (sha={})\n{}".format(
-        code_hash, util.indent(code)))
-    x = conn.execute(code)
-    LOGGER.debug("done executing on engine: \n{}".format(
-        code_hash))
-    return conn
 
 def panic(**kwargs):
     """ stop all engines """
@@ -211,7 +151,7 @@ CliWrapper(fxn=hx_test, aliases=['test'], extra_options=[])
 #         # cli.args.file,
 #     ])
 
-def houdini(file=None, verbose=False, **kargs):
+def houdini(engine=None, file=None, verbose=False, **kargs):
     """
     houdini cli wrapper
     """
@@ -223,22 +163,16 @@ def houdini(file=None, verbose=False, **kargs):
         cmd=CMD_BOOTSTRAP,
         system=True,
         environment=get_env())
-    hexec(CODE_VENV)
-    LOGGER.debug("loading script: {}".format(file))
-    conn = hexec(CODE_LOAD_SCRIPT.format(file=file))
+    ENGINE.exec_code(CODE_VENV)
+    ENGINE.exec_script(file=file)
+    remote_modules=ENGINE.import_remote_modules()
     namespace = locals().copy()
-    remote_modules = {}
-    for name in REMOTE_MODULES:
-        LOGGER.debug("retrieving `{}` handle from remote".format(name))
-        mod = getattr(conn.modules, name)
-        remote_modules.update({name: mod})
-        LOGGER.debug("settings sys.modules[{}]={}".format(name, mod))
-        sys.modules[name] = mod
+
     namespace.update(
-        conn=conn,
+        conn=ENGINE.conn,
         remote_modules=remote_modules)
     namespace.update(**remote_modules)
-    for k, v in conn.modules.penrose.hx.SCRIPT.items():
+    for k, v in ENGINE.conn.modules.penrose.hx.SCRIPT.items():
         LOGGER.debug("importing `{}`:".format(k))
         try:
             LOGGER.debug("  type={}".format(type(v)))

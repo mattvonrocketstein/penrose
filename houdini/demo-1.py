@@ -12,7 +12,9 @@ import coloredlogs
 
 ## Now that the VENV is ready, more imports are possible
 from penrose import (hx, util,)
-from penrose.hx import  node
+from penrose.hx.workspace import Workspace
+from penrose.hx.geometry import Geometry
+from penrose.hx import node
 
 demo_root = os.path.join(os.getcwd(), "houdini")
 input_root = os.path.join(demo_root, 'input')
@@ -21,9 +23,9 @@ output_root = os.path.join(demo_root, 'output')
 LOGGER = util.get_logger(__name__)
 
 ## setup framework, workspace, geometry
-workspace = hx.Workspace()
+workspace = Workspace()
 workspace.init()
-geo_engine = hx.Geometry()
+geo_engine = Geometry()
 
 ## unpack tree
 obj = geo_engine.obj
@@ -54,20 +56,20 @@ rows = geo_engine.get_grid(
 #         base['z']))
 #     for i, obj in enumerate(top)  ]
 
-umbrella = hx.node.create(
+umbrella = node.create(
     under=geo_engine.obj,
     into='umbrella', type='geo')
 
 # rows = top + middle + bottom
 # rows = top + bottom
 for x, row in enumerate(rows):
-    for y, node in enumerate(row):
-        node.setNextInput(umbrella)
-        geo = node.children()[0].geometry()
+    for y, _node in enumerate(row):
+        _node.setNextInput(umbrella)
+        geo = _node.children()[0].geometry()
         bbox = geo.boundingBox()
         center=bbox.center()
         rows[x][y] = dict(
-            node=node, x=x, y=y,
+            node=_node, x=x, y=y,
             center=center)
         # https://www.sidefx.com/docs/houdini/hom/hou/BoundingBox.html https://www.sidefx.com/forum/topic/49734/ https://www.sidefx.com/forum/topic/11472/?page=1#post-54958
         # create points at bounding box corners:
@@ -82,7 +84,7 @@ for x, row in enumerate(rows):
         corners = [a,b,c,d,e,f,g,h]
         print("corners: {}".format(corners))
         # for i, position in enumerate(corners):
-        #     point = hx.node.create(type='geo').children()[0].geometry().createPoint()
+        #     point = node.create(type='geo').children()[0].geometry().createPoint()
         #     point.setPosition(position)
 
 # nx = hou.ObjNode.origin(umbrella)
@@ -90,14 +92,14 @@ for x, row in enumerate(rows):
 #     hou.hmath.buildTranslate(
 #         nx.x(),nx.y(),nx.z()))
 
-umbrella2 = geo_engine.copy_node(umbrella, into='umbrella2')
+umbrella2 = geo_engine.copy_node(
+    umbrella, into='umbrella2')
 
 # setup cameras
 o_cam, x_cam,  y_cam, z_cam = \
     workspace.default_cameras(unit=10, focus=stl)
 
 stl.destroy()
-
 
 # adjust layout for generated objects
 workspace.organize()
