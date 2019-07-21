@@ -13,13 +13,13 @@ if venv:
         print "  + {}".format(path)
         sys.path.append(path)
 
-from penrose import (dorothy,)
+from penrose import (hx,)
 import hou
 import toolutils
 import stateutils
 import coloredlogs
 
-LOGGER = dorothy.get_logger(__name__)
+LOGGER = hx.get_logger(__name__)
 LOGGER.debug("logger init completed")
 SRC_ROOT = os.environ['SRC_ROOT']
 STL_ROOT = os.path.join(SRC_ROOT, 'stl')
@@ -50,7 +50,7 @@ if __name__=='__main__':
     # create tree
     out = hou.node('/out/')
     obj = hou.node('/obj/')
-    geo = dorothy.load_stl(obj, "./houdini/demo-1.stl")
+    geo = hx.load_stl(obj, "./houdini/demo-1.stl")
 
     # geo.loadFromFile('/Users/matt-admin/code/penrose/stl/compounds/cross-compound-3-spheres.py.scad.stl')
     # ufile = hou.pwd().createNode("file", "boonk", run_init_scripts=False, load_contents=True, exact_type_name=True)
@@ -58,12 +58,12 @@ if __name__=='__main__':
     # hou_parm.setAutoscope(False)
 
     # root.move(hou.Vector2(0, 0))
-    workspace = dorothy.Workspace()
+    workspace = hx.Workspace()
     workspace.technical()
     # geo = create_node(root, 'compound1', type='geo')
-    cam1 = dorothy.create_node(obj, 'cam1', type='cam')
+    cam1 = hx.create_node(obj, 'cam1', type='cam')
     # cam2 = create_node('cam2', type='cam')
-    dorothy.describe_nodes()
+    hx.describe_nodes()
 
 
 # # https://www.sidefx.com/docs/houdini/hom/hou/getPreference.html

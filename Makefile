@@ -23,6 +23,18 @@ BLBIN:=/Applications/Blender/blender.app/Contents/MacOS/
 PATH:=$(value PATH):${HBIN}:${BLBIN}
 export PATH
 
+normalize:
+	find penrose \
+	| grep [.]py$ \
+	| xargs autopep8 --in-place
+
+clean: panic clean-pyc
+demo: 
+	penrose hx houdini/demo-1.py
+
+clean-pyc:
+	find .|grep [.]pyc|xargs rm
+
 panic-%:
 	export output=$$(ps aux|grep -i ${*} \
 	| grep -v grep \
@@ -39,7 +51,7 @@ hou: test panic-houdini
 	penrose hx ./houdini/demo-1.py
 
 test:
-	export output=$$(! flake8 ./penrose/dorothy.py | grep 'Error\|E112') \
+	export output=$$(! flake8 ./penrose/hx.py | grep 'Error\|E112') \
 	; export status=$$? \
 	; echo $$output \
 	; exit $$status
