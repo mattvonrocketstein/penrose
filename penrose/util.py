@@ -20,6 +20,7 @@ import termcolor
 import functools32
 bold = functools32.partial(termcolor.colored, attrs=['bold'])
 
+
 def get_logger(name):
     formatter = logging.Formatter(
         fmt="[%(asctime)s] - %(name)s - %(message)s",
@@ -31,28 +32,45 @@ def get_logger(name):
     logger.setLevel('DEBUG')
     return logger
 
-LOGGER=get_logger(__name__)
-def indent(txt, level=2):
-    """
-    """
-    return '\n'.join([
-        (' ' * level) + line
-        for line in txt.split('\n') if line.strip()])
+
+LOGGER = get_logger(__name__)
+
+# def indent(txt, level=2):
+#     """
+#     """
+#     return '\n'.join([
+#         (' ' * level) + line
+#         for line in txt.split('\n') if line.strip()])
+
+try:
+    import textwrap
+    textwrap.indent
+except AttributeError:  # undefined function (wasn't added until Python 3.3)
+    def indent(text, amount=2, ch=' '):
+        padding = amount * ch
+        return ''.join(padding+line for line in text.splitlines(True))
+else:
+    def indent(text, amount=2, ch=' '):
+        return textwrap.indent(text, amount * ch)
+
 def invoke(cmd=None, stdin='', interactive=False, large_output=False, log_command=True, environment={}, log_stdin=True, system=False):
     """
     replacement for invoke module, which isn't great with pipes
     """
-    assert isinstance(environment,(dict,)),'expected dictionary for environment'
-    log_command and LOGGER.info("running command: {}".format(bold(indent(cmd))))
+    assert isinstance(environment, (dict,)
+                      ), 'expected dictionary for environment'
+    log_command and LOGGER.info(
+        "running command: {}".format(bold(indent(cmd))))
     if system:
         assert not stdin and not interactive
         error = os.system(cmd)
+
         class result(object):
             failed = failure = bool(error)
             success = succeeded = not bool(error)
             stdout = stdin = '<os.system>'
         return result
-    env_string = [ "{}='{}'".format(k, v) for k,v in environment.items() ]
+    env_string = ["{}='{}'".format(k, v) for k, v in environment.items()]
     env_string = ' '.join(env_string)
     cmd = "{} {}".format(env_string, cmd)
     exec_kwargs = dict(shell=True, )

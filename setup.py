@@ -22,7 +22,7 @@ setup(
         'console_scripts':
         [
             'penrose = {}.bin:main'.format(PACKAGE_NAME),
-            'dorothy = {}.bin:dorothy'.format(PACKAGE_NAME),
+            'hx = {}.bin:hx'.format(PACKAGE_NAME),
             # 'stl = {}.bin._stl:entry'.format(PACKAGE_NAME),
         ]},
     classifiers=[
