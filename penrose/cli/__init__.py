@@ -9,10 +9,12 @@ from .wrapper import CliWrapper
 
 LOGGER = util.get_logger(__name__)
 
+
 class Group(click.Group):
     """
     subclass of click.Group, mostly just for supporting command aliases
     """
+
     def list_commands(self, ctx):
         """ override  from super.
             this just re-orders aliases to the bottom of --help
@@ -26,12 +28,15 @@ class Group(click.Group):
     def command(self, *args, **kwargs):
         """ override  from super. """
         aliases = kwargs.pop('aliases', [])
+
         def decorator(f):
-            cmd = click.decorators.command(*args, **kwargs)(click.pass_context(f))
+            cmd = click.decorators.command(
+                *args, **kwargs)(click.pass_context(f))
             self.add_command(cmd)
             cmd.is_alias = False
             for alias in aliases:
                 zz = kwargs.copy()
+
                 def g(*aa, **kk):
                     return f(*aa, **kk)
                 g.__doc__ = g.help = 'ALIAS for `{}`'.format(cmd.name)
@@ -43,6 +48,6 @@ class Group(click.Group):
                 #     alias_cmd.name, cmd.name,
                 #     alias_cmd.params, cmd.params))
                 self.add_command(alias_cmd, name=alias)
-                alias_cmd.is_alias=True
+                alias_cmd.is_alias = True
             return cmd
         return decorator

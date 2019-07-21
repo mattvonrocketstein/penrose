@@ -4,27 +4,28 @@ from __future__ import absolute_import
 import click
 from functools import partial
 
-debug =  click.option(
+debug = click.option(
     '--debug',
     default=False, is_flag=True,
     help='Enables verbose mode.',)
 
-force =  click.option(
+force = click.option(
     '--force',
     default=False, is_flag=True,
     help='Forces action',)
 
-force =  click.option(
+force = click.option(
     '--verbose',
     default=False, is_flag=True,
     help='verbose logging',)
 
 existing_file = click.option('--file', type=click.Path(exists=True))
 file_format_partial = partial(click.option,
-    '--format', type=click.Choice(['json', 'yaml', 'yml', 'env']),
-    help='file format', )
+                              '--format', type=click.Choice(['json', 'yaml', 'yml', 'env']),
+                              help='file format', )
 file_format = format = file_format_partial(required=True)
-file_format_yml_default = file_format_yaml_default = file_format_partial(required=False, default='yaml')
+file_format_yml_default = file_format_yaml_default = file_format_partial(
+    required=False, default='yaml')
 
 script = click.option(
     '--script', '-s', help='Script to run', default='')
