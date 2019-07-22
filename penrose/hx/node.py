@@ -39,34 +39,72 @@ class Translator(object):
     def outwards(self, unit):
         return self.inwards(-unit)
 
-        #     #         base['x'] + (i*offset),
-        #     #         base['y'] + offset*y,
-        #     #         base['z']))
-
 class Node(HWrapper, Translator):
+
+    @staticmethod
+    @util.memoized
+    def root(self):
+        return HTree().root
+
     @staticmethod
     def create(under=None, type='geo', into=None, **kwargs):
         assert type is not None
-        under = under or HTree().root
-        node = under.createNode(type, **kwargs)
+        under = under or self.root
+        node = under.createNode(type, into, **kwargs)
         node.setName(into)
         node.moveToGoodPosition()
         return node
 
+    @property
+    def local_geometry(self):
+        """
+        """
+        node = self.node
+        try:
+            g = node.geometry
+        except AttributeError:
+            g = node.children()[0].geometry
+        g  = g()
+        return g
+
+    def point(self, *position):
+        """
+        """
+        p = self.local_geometry.createPoint()
+        p.setPosition(position)
+        return p
+        # a = bbox.minvec()
+        # b = (bbox.minvec()[0], bbox.maxvec()[1], bbox.minvec()[2])
+        # c = (bbox.maxvec()[0], bbox.maxvec()[1], bbox.minvec()[2])
+        # d = (bbox.maxvec()[0], bbox.minvec()[1], bbox.minvec()[2])
+        # e = bbox.maxvec()
+        # f = (bbox.maxvec()[0], bbox.minvec()[1], bbox.maxvec()[2])
+        # g = (bbox.minvec()[0], bbox.minvec()[1], bbox.maxvec()[2])
+        # h = (bbox.minvec()[0], bbox.maxvec()[1], bbox.maxvec()[2])
+        # corners = [a,b,c,d,e,f,g,h]
+        # print("corners: {}".format(corners))
+        # # for i, position in enumerate(corners):
+        # #     point = node.create(type='geo').children()[0].geometry().createPoint()
+        # #     point.setPosition(position)
+    def bbox(self):
+        """ """
+        return self.local_geometry.boundingBox()
+
     def __str__(self):
+        """ """
         return '<{}:{}>'.format(
             self.__class__.__name__,
             self.name)
     __repr__ = __str__
 
-    def __init__(self, **kwargs):
-        """
-        """
+    def __init__(self, code=None, **kwargs):
+        """ """
         node = kwargs.pop('node', None )
         self.create_kwargs = kwargs
         self.copy_count = 0
         if node is None:
             self.type_string = kwargs.pop('type', 'geo')
+            self.type_string = self.type_string if not code else 'pythonscript'
             self.run_init_scripts = kwargs.pop('run_init_scripts', True)
             self.under = kwargs.pop('under', self.tree['/obj'])
             self.into = kwargs.pop('into', uniq())
@@ -85,6 +123,8 @@ class Node(HWrapper, Translator):
                 created = False
                 node = old_node
         self.node = node
+        if code:
+            node.setParm(dict(python=code))
         self.logger_name = self.name
         HWrapper.__init__(self)
         # created and self.logger.debug("created: {}".format(node))
@@ -99,25 +139,22 @@ class Node(HWrapper, Translator):
             self.node, 'buildLookatRotation', None)
 
     def children(self):
-        """
-        """
+        """ """
         return [
             self.__class__(node=node) for node in self.node.children()
         ]
 
     @property
     def name(self):
+        """ """
         return self.node.name()
 
-    def copy(self, under=None, into=None): #node=None, count=1, **kwargs):
-        """
-        """
+    def copy(self, under=None, into=None):
+        """ """
         self.copy_count += 1
         results = []
-        # create_kwargs = self.create_kwargs.copy()
         into = into or '{}-{}-{}'.format(
             self.name, 'copy', self.copy_count)
-        # create_kwargs.update(into=into)
         under = under or self.node.parent()
         # self.obj.createNode(
         #     self.type_string,
@@ -142,6 +179,9 @@ class NodeArray(HWrapper, list):
             self.nodes += node
         list.__init__(self, self.nodes)
         self.container and self.set_input(self.container)
+        self.name = self.container and self.container.name
+        self.name = self.name or uniq()
+        HWrapper.__init__(self)
 
     @classmethod
     def create_from(cls, obj, count=1, use_original=True, **kwargs):
@@ -189,19 +229,7 @@ class NodeArray(HWrapper, list):
 #                 #     center=center)
 #                 # # # https://www.sidefx.com/docs/houdini/hom/hou/BoundingBox.html https://www.sidefx.com/forum/topic/49734/ https://www.sidefx.com/forum/topic/11472/?page=1#post-54958
 #                 # # create points at bounding box corners:
-#                 # a = bbox.minvec()
-#                 # b = (bbox.minvec()[0], bbox.maxvec()[1], bbox.minvec()[2])
-#                 # c = (bbox.maxvec()[0], bbox.maxvec()[1], bbox.minvec()[2])
-#                 # d = (bbox.maxvec()[0], bbox.minvec()[1], bbox.minvec()[2])
-#                 # e = bbox.maxvec()
-#                 # f = (bbox.maxvec()[0], bbox.minvec()[1], bbox.maxvec()[2])
-#                 # g = (bbox.minvec()[0], bbox.minvec()[1], bbox.maxvec()[2])
-#                 # h = (bbox.minvec()[0], bbox.maxvec()[1], bbox.maxvec()[2])
-#                 # corners = [a,b,c,d,e,f,g,h]
-#                 # print("corners: {}".format(corners))
-#                 # # for i, position in enumerate(corners):
-#                 # #     point = node.create(type='geo').children()[0].geometry().createPoint()
-#                 # #     point.setPosition(position)
+
 
 # def get_nodes():
 #     return [n for n in hou.node('/').allSubChildren()]

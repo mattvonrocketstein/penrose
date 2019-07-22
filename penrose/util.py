@@ -38,8 +38,9 @@ def hash(msg):
 def get_logger(name, handler=None):
     handler = handler or logging.StreamHandler()
     formatter = logging.Formatter(
-        fmt="[%(asctime)s] - %(name)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S")
+        fmt="[%(process)d] - %(name)s - %(message)s",
+        # datefmt="%Y-%m-%d %H:%M:%S",
+        )
     handler.setFormatter(formatter)
     logger = logging.getLogger(name)
     logger.addHandler(handler)
@@ -120,6 +121,19 @@ def invoke(cmd=None, stdin='', interactive=False, large_output=False, log_comman
     exec_cmd.failure = exec_cmd.failed
     return exec_cmd
 
+def memoized(fxn):
+    """
+    memoized/cache decorator for expensive computations
+    """
+    try:
+        return functools.lru_cache(64)(fxn)
+    except:
+        import backports.functools_lru_cache
+        return backports.functools_lru_cache.lru_cache(64)(fxn)
+
+def memoized_property(fxn):
+    """ memoized/caching property decorator """
+    return property(memoized(fxn))
 
 def highlight_code(code):
     """ """

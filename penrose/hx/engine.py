@@ -40,7 +40,8 @@ if venv:
     for x in os.listdir(lib_dir):
         path = os.path.join(lib_dir, x, 'site-packages')
         print "  + {}".format(path)
-        sys.path.append(path)"""
+        sys.path.append(path)
+"""
 
 class Engine(HWrapper):
     """ """

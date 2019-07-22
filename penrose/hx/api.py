@@ -42,6 +42,13 @@ def houdini(engine=None, file=None, verbose=False, **kargs):
     """
     assert os.path.exists(file), 'missing file: {}'.format(file)
     ENGINE.init()
+    LOGGER.debug("starting syslog listener")
+    from penrose.bin.pysyslogd import main
+    import threading
+    thread = threading.Thread(target=main)
+    thread.start()
+    LOGGER.debug("done starting syslog listener")
+
     ENGINE.exec_script(file=file)
     remote_modules = ENGINE.import_remote_modules()
     namespace = locals().copy()
@@ -50,17 +57,20 @@ def houdini(engine=None, file=None, verbose=False, **kargs):
         conn=ENGINE.conn,
         remote_modules=remote_modules)
     namespace.update(**remote_modules)
-    for k, v in ENGINE.conn.modules.penrose.hx.SCRIPT.items():
+    script_namespace = ENGINE.conn.modules.penrose.hx.SCRIPT
+    LOGGER.debug("importing `{}`:".format(script_namespace.keys()))
+    for k, v in script_namespace.items():
         if k.startswith('_'):
             LOGGER.debug("skipping `{}`:".format(k))
             continue
-        LOGGER.debug("importing `{}`:".format(k))
-        try:
-            LOGGER.debug("  type={}".format(type(v)))
-            LOGGER.debug("  val={}".format(v))
-        except:
-            LOGGER.debug("failed.")
-        else:
-            namespace.update({k: v})
+        # LOGGER.debug("importing `{}`:".format(k))
+        # try:
+        #     LOGGER.debug("  type={}".format(type(v)))
+        #     LOGGER.debug("  val={}".format(v))
+        # except:
+        #     LOGGER.debug("failed.")
+        # else:
+        namespace.update({k: v})
     import IPython
     IPython.embed(user_ns=namespace)
+    thread.terminate()

@@ -31,7 +31,6 @@ class HWrapper(Base):
 
 class HTree(dict, Base):
     """ """
-
     def __init__(self, tree=None, root=None, **kwargs):
         """ """
         self.tree = tree or \
@@ -42,9 +41,6 @@ class HTree(dict, Base):
         self.logger_name = 'HTree'
         abcs.Loggable.__init__(self)
         dict.__init__(self, self.tree)
-
-    # def refresh(self):
-
 
     @property
     def root(self):

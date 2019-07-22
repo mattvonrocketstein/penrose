@@ -47,6 +47,6 @@ CliWrapper(fxn=panic, aliases=['stop'], extra_options=[])
 
 CliWrapper(fxn=hx_api.houdini, aliases=['hx'], extra_options=[
     cli.options.script,
-    cli.args.file,
-])
+    cli.args.file,])
+
 CliWrapper(fxn=hx_api.test, aliases=['hx-test'], extra_options=[])

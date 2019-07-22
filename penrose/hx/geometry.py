@@ -107,11 +107,15 @@ class Geometry(HWrapper):
         """
         units = self.units
         cam_kwargs = dict(focus=focus)
-        return [
-            self.create_camera(into='o_cam', xform=units[0], **cam_kwargs),
+        all = [
+            # self.create_camera(into='o_cam', xform=units[0], **cam_kwargs),
             self.create_camera(into='x_cam', xform=units[1], **cam_kwargs),
             self.create_camera(into='y_cam', xform=units[2], **cam_kwargs),
             self.create_camera(into='z_cam', xform=units[3], **cam_kwargs), ]
+        kwargs = dict(
+            container=Node(into='axis_cams'))
+        from penrose.hx.node import NodeArray
+        return NodeArray(*all, **kwargs)
     # def poly(self, *points, **kwargs):
     #     """  """
     #     under = kwargs.pop('under', None)

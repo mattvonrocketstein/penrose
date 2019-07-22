@@ -24,6 +24,7 @@ setup(
             'penrose = {}.bin.penrose:main'.format(PACKAGE_NAME),
             'hx = {}.bin.hx:main'.format(PACKAGE_NAME),
             'stl = {}.bin.stl:main'.format(PACKAGE_NAME),
+            'py-syslogd = {}.bin.pysyslogd:main'.format(PACKAGE_NAME),
         ]},
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',

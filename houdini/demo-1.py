@@ -20,7 +20,9 @@ demo_root = os.path.join(os.getcwd(), "houdini")
 input_root = os.path.join(demo_root, 'input')
 output_root = os.path.join(demo_root, 'output')
 
-LOGGER = util.get_logger(__file__)
+import logging.handlers
+handler = logging.handlers.SysLogHandler(address = ('127.0.0.1', 514))
+LOGGER = util.get_logger(__file__,handler=handler)
 
 LOGGER.debug("setup framework, workspace, geometry")
 workspace = Workspace()
@@ -35,17 +37,22 @@ stl_file =  os.path.join(input_root, "demo-1.bstl")
 stl = geo_engine.load(filename=stl_file, into='stl')
 LOGGER.debug("done loading data")
 
-LOGGER.debug("building grid from original")
+LOGGER.debug("building array from object: {}".format(stl))
 ng1 = node.NodeArray.create_from(
-    obj=stl, count=2,
+    obj=stl, count=1,
     container=node.Node(into='stl-copies'))
-# ng1 = [ stl.copy(into='{}-{}'.format(stl.name, i)) for i in range(2) ]
-ng1.map_enum(lambda i,x: x.right(i * 1.25))
+
+ng1.logger.debug("orienting group")
+ng1.map_enum(lambda i, x: x.right(i * 1.25))
 ng1.container.right(geo_engine.unit)
 
-ng2 = ng1.copy()
-ng2.map_enum(lambda i,x: x.left(i * 1.25))
-ng2.container.left(geo_engine.unit)
+code1 =  node.Node(code="this_node = hou.pwd()", into='code1')
+
+# ng2 = ng1.copy()
+# ng2.logger.debug("orienting group")
+# ng2.map_enum(lambda i,x: x.left(i * 1.25))
+# ng2.container.left(geo_engine.unit)
+
 # opparm
 # https://www.sidefx.com/forum/topic/10888/
 # [ _node.node.setNextInput(container) for _node in ng1 ]
@@ -53,13 +60,8 @@ ng2.container.left(geo_engine.unit)
     # x=3, y=2, obj=stl,
     # offset=1.25, )
 
-# umbrella = Node(into='umbrella')
-
-# ng1.set_input(umbrella)
-# umbrella2 = umbrella.copy(into='umbrella2')
-
 LOGGER.debug("setup cameras")
-o_cam, x_cam,  y_cam, z_cam = \
+cams = \
     geo_engine.default_cameras(focus=stl)
 
 # stl.destroy()
