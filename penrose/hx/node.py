@@ -2,11 +2,13 @@
         node wrapper for houdini
 """
 
+import inspect
+import uuid
+
 from penrose import (
     # abcs,
     util,)
 
-import uuid
 import hou
 
 LOGGER = util.get_logger(__name__)
@@ -97,7 +99,7 @@ class Node(HWrapper, Translator):
             self.name)
     __repr__ = __str__
 
-    def __init__(self, code=None, **kwargs):
+    def __init__(self, code=None, fxn=None, **kwargs):
         """ """
         def get_node():
             self.type_string = kwargs.pop('type', 'geo')
@@ -123,6 +125,11 @@ class Node(HWrapper, Translator):
         self.create_kwargs = kwargs
         self.copy_count = 0
         self.node  = kwargs.pop('node', None ) or get_node()
+        if fxn:
+            #FIXME: assert no args
+            assert callable(fxn)
+            code = inspect.getsource(fxn)
+            code += '\n{}()'.format(fxn.func_name)
         if code:
             self.code = code
             p = self.node.createNode('python')

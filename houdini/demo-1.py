@@ -45,34 +45,14 @@ LOGGER.debug("done loading data")
 # ng1.map_enum(lambda i, x: x.right(i * 1.25))
 # ng1.container.right(geo_engine.unit)
 
-# not a sop but
-# https://www.sidefx.com/docs/houdini/nodes/obj/pythonscript.html
-# def loadPythonSourceIntoAsset(otl_file_path, node_type_name, source_file_path):
-# Load the Python source code.
-source = """node = hou.pwd()
-geo = node.geometry()
-
-# Add code to modify contents of geo.
-# Use drop down menu to select examples.
-# This code is called when instances of this SOP cook.
-geo = hou.pwd().geometry()
-
-# Add code to modify the contents of geo.
-for i in range(0, 100):
-  pt = geo.createPoint()
-  pt.setPosition(hou.Vector3(i * 0.1, 0, 0))"""
-code1 = node.Node(code=source, into='code1')
-# pycon = node.Node(type='geo', into='py-container')
-# p = hou.node('/obj/py-container').createNode('python')
-# p.setParms(dict(python=source))
-# Find the asset definition in the otl file.
-# definitions = [ definition
-#     for definition in hou.hda.definitionsInFile('/tmp/foo.otl')
-#     if definition.nodeTypeName() == node_type_name]
-# assert(len(definitions) == 1)
-# definition = definitions[0]
-# # Store the source code into the PythonCook section of the asset.
-# definition.addSection("PythonCook", source)
+def fxn():
+    node = hou.pwd()
+    geo = node.geometry()
+    geo = hou.pwd().geometry()
+    for i in range(0, 100):
+      pt = geo.createPoint()
+      pt.setPosition(hou.Vector3(i * 0.1, 0, 0))
+code1 = node.Node(fxn=fxn, into='code1')
 
 # ng2 = ng1.copy()
 # ng2.logger.debug("orienting group")
