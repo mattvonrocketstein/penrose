@@ -41,15 +41,15 @@ class Translator(object):
 
 class Node(HWrapper, Translator):
 
-    @staticmethod
     @util.memoized
-    def root(self):
+    @staticmethod
+    def get_root():
         return HTree().root
 
     @staticmethod
     def create(under=None, type='geo', into=None, **kwargs):
         assert type is not None
-        under = under or self.root
+        under = under or Node.get_root()
         node = under.createNode(type, into, **kwargs)
         node.setName(into)
         node.moveToGoodPosition()
@@ -99,12 +99,8 @@ class Node(HWrapper, Translator):
 
     def __init__(self, code=None, **kwargs):
         """ """
-        node = kwargs.pop('node', None )
-        self.create_kwargs = kwargs
-        self.copy_count = 0
-        if node is None:
+        def get_node():
             self.type_string = kwargs.pop('type', 'geo')
-            self.type_string = self.type_string if not code else 'pythonscript'
             self.run_init_scripts = kwargs.pop('run_init_scripts', True)
             self.under = kwargs.pop('under', self.tree['/obj'])
             self.into = kwargs.pop('into', uniq())
@@ -122,9 +118,15 @@ class Node(HWrapper, Translator):
             else:
                 created = False
                 node = old_node
-        self.node = node
+            return node
+
+        self.create_kwargs = kwargs
+        self.copy_count = 0
+        self.node  = kwargs.pop('node', None ) or get_node()
         if code:
-            node.setParm(dict(python=code))
+            self.code = code
+            p = self.node.createNode('python')
+            p.setParms(dict(python=code))
         self.logger_name = self.name
         HWrapper.__init__(self)
         # created and self.logger.debug("created: {}".format(node))

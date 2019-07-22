@@ -44,9 +44,9 @@ def houdini(engine=None, file=None, verbose=False, **kargs):
     ENGINE.init()
     LOGGER.debug("starting syslog listener")
     from penrose.bin.pysyslogd import main
-    import threading
-    thread = threading.Thread(target=main)
-    thread.start()
+    import multiprocessing
+    proc = multiprocessing.Process(target=main)
+    proc.start()
     LOGGER.debug("done starting syslog listener")
 
     ENGINE.exec_script(file=file)
@@ -73,4 +73,4 @@ def houdini(engine=None, file=None, verbose=False, **kargs):
         namespace.update({k: v})
     import IPython
     IPython.embed(user_ns=namespace)
-    thread.terminate()
+    proc.terminate()
