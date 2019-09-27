@@ -11,8 +11,7 @@ import click
 import functools32
 
 import penrose
-from penrose import (api, cli, util,)
-from penrose.hx.util import get_env
+from penrose import (api, cli, util, )
 import rpyc
 import time
 

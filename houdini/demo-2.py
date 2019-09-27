@@ -1,48 +1,87 @@
+#
+"""
+Layout workspace and viewports,
+Create 3 cameras for perspective views,
+Load a STL file into a base geometry,
+Copy, Translate copies, group copies
+"""
 
-# geo_engine.carpet(*stl, offset=2, cols=cols, rows=rows)
-# geo_engine.grid()
-# obj.createNode("geo", "geo1", run_init_scripts=False)
-# > <hou.ObjNode of type geo at /obj/geo3>
-# > >>> obj.node("geo1").children()
-# > (<hou.SopNode of type file at /obj/geo1/file1>,)
-# node = hx.create_node(obj, 'node', type= 'geo', run_init_scripts=False)
-# geo = node.geometry()
-# p0 = geo.createPoint()
-# p1 = geo.createPoint()
-# geo = hx.create_node(obj, 'geo', type='geo')
-# p2 = geo.createPoint()
-# p3 = geo.createPoint()
-# p4 = default.geo.createPoint()
-# p0.setPosition((0, 0, 0))
-# p1.setPosition((.5, .5, .5))
-# p2.setPosition((.5, -.5, -.5))
-# p3.setPosition((-.5, .5, -.5))
-# p4.setPosition((-.5, -.5, .5))
+import os
 
+import hou
+import toolutils
+import stateutils
 
+import coloredlogs
 
-# middle = geo_engine.copy_node(stl, into='middle', count=num_cols)
-# [  obj.setParmTransform(hou.hmath.buildTranslate(
-#         base['x'] + (-1**i)*(offset*i),
-#         base['y'],
-#         base['z']))
-#     for i, obj in enumerate(middle)  ]
+## Now that the VENV is ready, more imports are possible
+from penrose import (hx, util,)
+from penrose.hx.workspace import Workspace
+from penrose.hx.geometry import Geometry
+from penrose.hx import node
 
-# stl.setName('-'.join(['original', stl.name()]))
+demo_root = os.path.join(os.getcwd(), "houdini")
+input_root = os.path.join(demo_root, 'input')
+output_root = os.path.join(demo_root, 'output')
 
+import logging.handlers
+handler = logging.handlers.SysLogHandler(address = ('127.0.0.1', 514))
+LOGGER = util.get_logger(__file__,handler=handler)
 
-# stl_file.loadFromFile(os.path.join(
-#     STL_ROOT,
-#     '/compounds/cross-compound-3.py.scad.stl'))
-#     # get_viewport().setCamera(cam)
-#     describe_nodes()
-#     # addTriangle(default,  p,  q,  r)
-#     addTriangle(default, p0, p1, p2)
-#     addTriangle(default, p0, p1, p3)
-#     addTriangle(default, p0, p1, p4)
-#     addTriangle(default, p0, p2, p3)
-#     addTriangle(default, p0, p2, p4)
-#     addTriangle(default, p0, p3, p4)
-#     describe_nodes()
-# main()
-# root.move(hou.Vector2(0, 0))
+LOGGER.debug("setup framework, workspace, geometry")
+workspace = Workspace()
+workspace.modeling_layout()
+
+# https://www.sidefx.com/docs/houdini/hom/hou/NetworkEditor.html
+net_tab = workspace.get_network_editor_tab()
+net_tab.flashMessage(None, "penrose!", 5)
+
+geo_engine = Geometry(unit=10)
+
+LOGGER.debug("unpack tree")
+tree = geo_engine.tree
+
+LOGGER.debug("load data")
+stl_file =  os.path.join(input_root, "demo-1.bstl")
+stl = geo_engine.load(filename=stl_file, into='stl')
+LOGGER.debug("done loading data")
+
+LOGGER.debug("building array from object: {}".format(stl))
+ng1 = node.NodeArray.create_from(
+    obj=stl, count=1,
+    container=node.Node(into='stl-copies'))
+ng1.logger.debug("orienting group")
+ng1.map_enum(lambda i, x: x.right(i * 1.25))
+ng1.container.right(geo_engine.unit)
+
+ng2 = ng1.copy()
+ng2.logger.debug("orienting group")
+ng2.map_enum(lambda i,x: x.left(i * 1.25))
+ng2.container.left(geo_engine.unit)
+
+LOGGER.debug("setup cameras")
+cams = geo_engine.default_cameras(focus=stl)
+x_cam, y_cam, z_cam = cams
+
+LOGGER.debug("adjust layout for generated objects")
+workspace.organize()
+
+LOGGER.debug("useful handles for UI")
+tabs = workspace.get_tabs()
+vport = workspace.get_viewport()
+
+LOGGER.debug("adjust viewport")
+vport.homeAll()
+
+# crashes consistently:
+# workspace.scene.setViewportLayout(hou.geometryViewportLayout.TripleLeftSplit)
+
+# vport.setCamera(z_cam.name())
+# workspace.python_mode(max=True)
+# __file__ is not available inside houdini runtime >:/
+workspace.set_status_msg(__file__)
+
+# try:
+#     network_ed = tabs['NetworkEditor']
+# except KeyError:
+#     LOGGER.debug("could not resolve `NetworkEditor` tab")

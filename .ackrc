@@ -1,7 +1,9 @@
---ignore-file=ext:stl
 --ignore-file=ext:svg
 --ignore-file=ext:js
 --ignore-file=ext:css
 --ignore-file=ext:gcode
 --ignore-dir=.tmp
 --ignore-dir=build
+--ignore-dir=blender
+--ignore-dir=OctoPrint
+--ignore-dir=tools

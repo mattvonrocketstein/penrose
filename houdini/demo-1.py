@@ -1,5 +1,8 @@
 #
 """
+Layout workspace and viewports,
+Load a STL file into a base geometry,
+create 3 cameras for perspective views,
 """
 
 import os
@@ -27,6 +30,9 @@ LOGGER = util.get_logger(__file__,handler=handler)
 LOGGER.debug("setup framework, workspace, geometry")
 workspace = Workspace()
 workspace.init()
+net_ed = workspace.network_editor
+net_ed.flash_msg("penrose!")
+
 geo_engine = Geometry(unit=10)
 
 LOGGER.debug("unpack tree")
@@ -37,13 +43,12 @@ stl_file =  os.path.join(input_root, "demo-1.bstl")
 stl = geo_engine.load(filename=stl_file, into='stl')
 LOGGER.debug("done loading data")
 
-# LOGGER.debug("building array from object: {}".format(stl))
-# ng1 = node.NodeArray.create_from(
-#     obj=stl, count=1,
-#     container=node.Node(into='stl-copies'))
-# ng1.logger.debug("orienting group")
-# ng1.map_enum(lambda i, x: x.right(i * 1.25))
-# ng1.container.right(geo_engine.unit)
+LOGGER.debug("building array from object: {}".format(stl))
+ng1 = node.NodeArray.create_from(
+    obj=stl, count=1,
+    container=node.Node(into='stl-copies'))
+ng1.logger.debug("orienting group")
+ng1.map_enum(lambda i, x: x.right(i * 1.25))
 
 def fxn():
     node = hou.pwd()
@@ -67,20 +72,21 @@ code1 = node.Node(fxn=fxn, into='code1')
     # offset=1.25, )
 
 LOGGER.debug("setup cameras")
-cams = \
-    geo_engine.default_cameras(focus=stl)
-
-# stl.destroy()
+cams = geo_engine.default_cameras(focus=stl)
+x_cam, y_cam, z_cam = cams
 
 LOGGER.debug("adjust layout for generated objects")
 workspace.organize()
 
 LOGGER.debug("useful handles for UI")
-tabs = workspace.tabs()
+tabs = workspace.get_tabs()
 vport = workspace.get_viewport()
+
+net_ed.center()
 
 LOGGER.debug("adjust viewport")
 vport.homeAll()
+
 # vport.setCamera(z_cam.name())
 # workspace.python_mode(max=True)
 # __file__ is not available inside houdini runtime >:/

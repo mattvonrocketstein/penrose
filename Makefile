@@ -33,8 +33,9 @@ clean-pyc:
 	find .|grep [.]pyc|xargs rm
 clean: panic clean-pyc
 
-demo:
-	penrose hx houdini/demo-1.py
+demo: demo-1
+demo-%:
+	penrose hx houdini/demo-$(*).py
 
 panic:
 	penrose panic
