@@ -138,3 +138,19 @@ def memoized_property(fxn):
 def highlight_code(code):
     """ """
     return highlight(code, PY_LEX, PY_FMT)
+
+
+
+import math
+
+sin = lambda x: math.sin(math.radians(x))
+cos = lambda x: math.cos(math.radians(x))
+
+def hexagon(r):
+    return [
+    (r*cos(0),   r*sin(0),   0),
+    (r*cos(60),  r*sin(60),  0),
+    (r*cos(120), r*sin(120), 0),
+    (r*cos(180), r*sin(180), 0),
+    (r*cos(240), r*sin(240), 0),
+    (r*cos(300), r*sin(300), 0),]
