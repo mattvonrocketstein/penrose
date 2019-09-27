@@ -26,10 +26,16 @@
 * https://github.com/kiryha/Houdini/wiki/python-snippets
 * https://www.sidefx.com/docs/houdini/hom/hou/index.html (hpi reference)
 * https://www.sidefx.com/tutorials/ (video tutorials)
+* API refs
+  * https://www.sidefx.com/docs/houdini/hom/hou/Polygon.html
+  * https://www.sidefx.com/docs/houdini/hom/hou/BoundingRect.html
+  * https://www.sidefx.com/docs/houdini/hom/hou/ui.html
+  * https://www.sidefx.com/docs/houdini/hom/hou/Pane.html
+  * https://www.sidefx.com/docs/houdini/hom/hou/PaneTab.html
 
 **Threads:**
 
-* Placeholder
+* https://wordpress.discretization.de/houdini/home/advanced-2/python/ (Python SOPs)
 * Placeholder
 * Placeholder
 
@@ -191,6 +197,7 @@ We have stripped many acronyms from the docs but the fact that they still exist 
 ## References
 
 * [Penrose tiling algorithm explanation](http://preshing.com/20110831/penrose-tiling-explained/)
+* [Hexagonal tiling](https://www.quora.com/How-can-you-find-the-coordinates-in-a-hexagon)
 * [OpenSCAD cheatsheet](http://www.openscad.org/cheatsheet/)
 * [Solid docs](https://github.com/SolidCode/SolidPython)
 * [OpenSCAD User Manual](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/The_OpenSCAD_Language)
