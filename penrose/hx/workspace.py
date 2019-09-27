@@ -100,6 +100,11 @@ class Workspace(HWrapper):
                 #  highlight in viewer whatever's under mouse in net-editor pane
                 pane.homeToSelection()
 
+            def set_max(himself,bool):
+                himself.pane.pane().setIsMaximized(bool)
+            def maximize(himself): himself.set_max(True)
+            def unmaximize(himself): himself.set_max(False)
+
             def flash_msg(himself, msg, delay=5, img=None):
                 """ """
                 himself.pane.flashMessage(img, msg, 5)

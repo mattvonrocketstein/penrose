@@ -31,6 +31,7 @@ LOGGER.debug("setup framework, workspace, geometry")
 workspace = Workspace()
 workspace.init()
 net_ed = workspace.network_editor
+net_ed.maximize()
 net_ed.flash_msg("penrose!")
 
 geo_engine = Geometry(unit=10)
@@ -91,6 +92,7 @@ vport.homeAll()
 # workspace.python_mode(max=True)
 # __file__ is not available inside houdini runtime >:/
 workspace.set_status_msg(__file__)
+net_ed.unmaximize()
 
 # try:
 #     network_ed = tabs['NetworkEditor']

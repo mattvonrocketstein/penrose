@@ -33,8 +33,9 @@ workspace = Workspace()
 workspace.modeling_layout()
 
 # https://www.sidefx.com/docs/houdini/hom/hou/NetworkEditor.html
-net_tab = workspace.get_network_editor_tab()
-net_tab.flashMessage(None, "penrose!", 5)
+net_ed = workspace.network_editor
+net_ed.maximize()
+net_ed.flash_msg("penrose!")
 
 geo_engine = Geometry(unit=10)
 
@@ -73,15 +74,9 @@ vport = workspace.get_viewport()
 LOGGER.debug("adjust viewport")
 vport.homeAll()
 
-# crashes consistently:
-# workspace.scene.setViewportLayout(hou.geometryViewportLayout.TripleLeftSplit)
-
 # vport.setCamera(z_cam.name())
 # workspace.python_mode(max=True)
 # __file__ is not available inside houdini runtime >:/
 workspace.set_status_msg(__file__)
 
-# try:
-#     network_ed = tabs['NetworkEditor']
-# except KeyError:
-#     LOGGER.debug("could not resolve `NetworkEditor` tab")
+net_ed.unmaximize()

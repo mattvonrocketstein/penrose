@@ -17,18 +17,45 @@
 <a name=References></a>
 ## References
 
-#### Misc
-
-* https://pypi.org/project/numpy-stl/
-* https://github.com/phistrom/mesh2img
 
 #### Houdini:
+
+**General refs:**
 
 * https://github.com/kiryha/Houdini/wiki/python-for-artists
 * https://github.com/kiryha/Houdini/wiki/python-snippets
 * https://www.sidefx.com/docs/houdini/hom/hou/index.html (hpi reference)
 * https://www.sidefx.com/tutorials/ (video tutorials)
 
+**Threads:**
+
+* Placeholder
+* Placeholder
+* Placeholder
+
+**GUI Elements as Code:**
+
+```
+# https://www.sidefx.com/forum/topic/47475/
+hou_node = hou.node("/obj")
+# Update the parent node.
+hou_parent = hou_node
+# Code for /obj/pythonscript1
+hou_node = hou_parent.createNode("pythonscript", "pythonscript1", run_init_scripts=False, load_contents=True, exact_type_name=True)
+hou_node.move(hou.Vector2(2.89402, 1.70585))
+hou_node.setSelectableInViewport(True)
+hou_node.showOrigin(False)
+hou_node.useXray(False)
+hou_node.setDisplayFlag(True)
+hou_node.setSelected(False)
+# Code for /obj/pythonscript1/python parm
+if locals().get("hou_node") is None:
+    hou_node = hou.node("/obj/pythonscript1")
+hou_parm = hou_node.parm("python")
+hou_parm.set("print \"Hello World\"\n")
+
+print node.asCode(brief=True, recurse=False, save_creation_commands=True, save_spare_parms=True)
+```
 #### Blender
 
 * https://docs.blender.org/manual/en/latest/render/workflows/command_line.html
@@ -88,18 +115,31 @@ $ penrose scad ./openscad/demo-1.py
 * Generation of triangle vertices corresponding to penrose tilings (in python)
 * 2D rendering with [cairo backend](https://pypi.python.org/pypi/cairocffi)
 
-<a name=Resources></a>
-## Resources
+<a name=Prerequisites></a>
+## Prerequisites
 
 * [Installing Python](https://www.python.org/downloads/)
 * [Installing OpenSCAD](http://www.openscad.org/downloads.html)
-* [Penrose tiling algorithm explanation](http://preshing.com/20110831/penrose-tiling-explained/)
-* [OpenSCAD cheatsheet](http://www.openscad.org/cheatsheet/)
-* [Solid docs](https://github.com/SolidCode/SolidPython)
-* [OpenSCAD User Manual](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/The_OpenSCAD_Language)
+* https://pypi.org/project/numpy-stl/
+* https://github.com/phistrom/mesh2img
+
 
 <a name=RunningTheCode></a>
 ## Running the Code
+
+```
+mkvirtualenv 3d
+alias 3d='workon 3d'
+3d
+pip install -r requirements.txt
+python setup.py  develop
+
+# stop all rendering engines
+make panic
+
+# start houdini engine with demo script 1
+make demo-1
+```
 
 Running the `penrose.py` script refreshes `penrose.scad` (3d backend) and `penrose.png` (2d backend).  More specifically:
 
@@ -108,10 +148,12 @@ alias openscad="/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD" # for osx
 python penrose.py
 openscad penrose.scad
 ```
+
 ## Appendix
 
 ( originally from https://www.sidefx.com/forum/topic/43515/?page=1#post-223682 )
 
+```
 First thing, set your desktop to “Technical”. This gives you the folder view on the left hand side. A Houdini scene is actually composed of network folders and objects inside those networks. You can traverse these folders with the network pane.
 
 Folders are associated with a network type. We have acronyms for the network types and the nodes inside these networks.
@@ -143,3 +185,12 @@ All these folder types and node types are clearly indicated inside the Tree View
 What makes these acronyms so important is that you can communicate ideas much quicker without any ambiguity with your fellow Houdini co-workers. This is known as “Houdini Speak”.
 
 We have stripped many acronyms from the docs but the fact that they still exist and get used all the time speaks volumes to their usefulness.
+```
+
+<a name=References></a>
+## References
+
+* [Penrose tiling algorithm explanation](http://preshing.com/20110831/penrose-tiling-explained/)
+* [OpenSCAD cheatsheet](http://www.openscad.org/cheatsheet/)
+* [Solid docs](https://github.com/SolidCode/SolidPython)
+* [OpenSCAD User Manual](https://en.wikibooks.org/wiki/OpenSCAD_User_Manual/The_OpenSCAD_Language)
