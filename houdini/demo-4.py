@@ -32,10 +32,10 @@ workspace = Workspace()
 workspace.modeling_layout()
 
 geo_engine = Geometry(unit=10)
-
-
+hou.session.HEXAGON_RADIUS = geo_engine.unit / 2.0
 # https://www.quora.com/How-can-you-find-the-coordinates-in-a-hexagon
-def py_src_sop(r=.5):
+
+def hexagon(r=hou.session.HEXAGON_RADIUS):
     """
     source node.
     as a SOP, this will not get the global context..
@@ -49,15 +49,39 @@ def py_src_sop(r=.5):
         point.setPosition(util.hexagon(r)[i])
         poly.addVertex(point)
     poly.setIsClosed(True)
-    # polyextrude1 parameters - ('depth', 3.0),
-    #  ('basenormalx', 1.0),
-    #  ('basenormaly', 1.0),
-    #  ('basenormalz', 1.0),
-    # [(parm.name(),parm.eval()) for parm in hou.node('/obj/code2/extrudevolume1').parms()]
-py_src_sop = node.Node(fxn=py_src_sop, into='py_src_sop')
+
+def hex_module(n, m, r=hou.session.HEXAGON_RADIUS):
+    """ """
+    import math
+    const = (math.sqrt(3) / 2.0)
+    _3x5 = node.Node(fxn=hexagon, into='_3x5')
+    python1 = _3x5['python1']
+    extrude = _3x5.createNode("extrude", "extrude")
+    extrude.setParms(depthscale=1)
+    extrude.setInput(0, python1)
+    copy1 = _3x5.createNode("copyxform", "copy1")
+    copy1.setInput(0, extrude)
+    copy1.setParms(dict({
+        'tx': 0,
+        'ty': 2*const*hou.session.HEXAGON_RADIUS,
+        'ncy': n,
+    }))
+    copy2 = _3x5.createNode("copyxform", "copy2")
+    copy2.setInput(0, copy1)
+    copy2.setParms(dict({
+        'ty': const*hou.session.HEXAGON_RADIUS,
+        'tx': (2*hou.session.HEXAGON_RADIUS)* (3.0/4.0) ,
+        'ncy': m,}))
+    return _3x5
+
+mod1 = hex_module(3, 5)
+# bbox = mod1.bbox()
+mod1.setParms(rz=30)
+# mod1.setParms(rx=HEXAGON_RADIUS)
+# print mod1.parms
 
 LOGGER.debug("setup cameras")
-cams = geo_engine.default_cameras(focus=py_src_sop)
+cams = geo_engine.default_cameras(focus=mod1)
 x_cam, y_cam, z_cam = cams
 
 LOGGER.debug("adjust layout for generated objects")

@@ -92,6 +92,10 @@ class Node(HWrapper, Translator):
         """ """
         return self.local_geometry.boundingBox()
 
+    def __getitem__(self, name):
+        """ """
+        return [ ch for ch in self.children() if ch.name == name ][0]
+
     def __str__(self):
         """ """
         return '<{}:{}>'.format(
@@ -138,7 +142,6 @@ class Node(HWrapper, Translator):
         HWrapper.__init__(self)
         # created and self.logger.debug("created: {}".format(node))
         # not created and self.logger.debug("reused: {}".format(node))
-        self.createNode = self.node.createNode
         self.parm = self.node.parm
         self.setParmTransform  = getattr(
             self.node, 'setParmTransform', None)
@@ -146,6 +149,49 @@ class Node(HWrapper, Translator):
             self.node, 'setWorldTransform', None)
         self.buildLookatRotation  = getattr(
             self.node, 'buildLookatRotation', None)
+
+    def createNode(self, type, name):
+        """ """
+        result = self.node.createNode(type, name)
+        result.moveToGoodPosition()
+        result.setDisplayFlag(True)
+        return self.__class__(node=result)
+
+    def setInput(self, index, node):
+        """ """
+        if isinstance(node.node, (hou.Node, )):
+            node = node.node
+        self.node.setInput(index, node)
+
+    @property
+    def parms(self):
+        class Parms(object):
+            def __init__(self, parent):
+                self.parent=parent
+
+            def __repr__(self):
+                return "<NodeParms: {}..>".format(str(self.as_dict)[:10])
+
+            str__=__repr__
+            @property
+            def as_dict(self):
+                return dict([(parm.name(),parm.eval()) for parm in self.parent.node.parms()])
+            def keys(self):
+                return self.as_dict.keys()
+            def items(self):
+                return self.as_dict.items()
+            def __getitem__(self, name):
+                return self.as_dict[name]
+            def __setitem__(self,name,val):
+                return self.parent.setParms({name:val})
+        return Parms(self)
+
+    def setParms(self, *args, **kargs):
+        """ """
+        pdict = args and args[0]
+        pdict = pdict or {}
+        pdict.update(**kargs)
+        return self.node.setParms(pdict)
 
     def children(self):
         """ """
