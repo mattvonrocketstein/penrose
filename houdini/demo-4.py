@@ -29,7 +29,9 @@ LOGGER = util.get_logger(__file__,handler=handler)
 
 LOGGER.debug("setup framework, workspace, geometry")
 workspace = Workspace()
-workspace.modeling_layout()
+net_ed = workspace.network_editor
+net_ed.maximize()
+net_ed.flash_msg("penrose!")
 
 geo_engine = Geometry(unit=10)
 hou.session.HEXAGON_RADIUS = geo_engine.unit / 2.0
@@ -50,35 +52,54 @@ def hexagon(r=hou.session.HEXAGON_RADIUS):
         poly.addVertex(point)
     poly.setIsClosed(True)
 
-def hex_module(n, m, r=hou.session.HEXAGON_RADIUS):
+def hex_module(n, m, r=hou.session.HEXAGON_RADIUS, **kwargs):
     """ """
     import math
     const = (math.sqrt(3) / 2.0)
-    _3x5 = node.Node(fxn=hexagon, into='_3x5')
+    _3x5 = node.Node(fxn=hexagon, into='_3x5-{}'.format(node.uniq()))
     python1 = _3x5['python1']
-    extrude = _3x5.createNode("extrude", "extrude")
+    extrude = _3x5.createNode("extrude", 'extrude-{}'.format(node.uniq()))
     extrude.setParms(depthscale=1)
     extrude.setInput(0, python1)
-    copy1 = _3x5.createNode("copyxform", "copy1")
+    copy1 = _3x5.createNode("copyxform", 'copy1-{}'.format(node.uniq()))
     copy1.setInput(0, extrude)
     copy1.setParms(dict({
         'tx': 0,
         'ty': 2*const*hou.session.HEXAGON_RADIUS,
         'ncy': n,
     }))
-    copy2 = _3x5.createNode("copyxform", "copy2")
+    copy2 = _3x5.createNode("copyxform", 'copy2-{}'.format(node.uniq()))
     copy2.setInput(0, copy1)
-    copy2.setParms(dict({
+    tmp = dict({
         'ty': const*hou.session.HEXAGON_RADIUS,
         'tx': (2*hou.session.HEXAGON_RADIUS)* (3.0/4.0) ,
-        'ncy': m,}))
+        'ncy': m,
+        })
+    tmp.update(**kwargs.get('copy2',{}))
+    copy2.setParms(tmp)
+    color = _3x5.createNode('color')
+    color.setInput(0, copy2)
+    color.setParms(**kwargs.get('color',{}))
     return _3x5
 
-mod1 = hex_module(3, 5)
-# bbox = mod1.bbox()
-mod1.setParms(rz=30)
-# mod1.setParms(rx=HEXAGON_RADIUS)
-# print mod1.parms
+n, m = 3, 5
+mod1 = hex_module(n, m, color=dict(colorr=0, colorg=0, colorb=1))
+common_parms = dict(
+    rx=0, ry=0,
+    rz=-n*geo_engine.unit,
+    ty=-hou.session.HEXAGON_RADIUS,
+    tx=-2*geo_engine.unit)
+mod1.setParms(**common_parms)
+
+mod2 = hex_module(
+    3, 5,
+    copy2=dict(sx=.5, sy=.5, sz=.5,),
+    color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255))
+mod2.setParms(
+    tz=.5,
+    sx=.5, sy=.5, sz=.5,
+    **common_parms)
+
 
 LOGGER.debug("setup cameras")
 cams = geo_engine.default_cameras(focus=mod1)

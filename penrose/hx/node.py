@@ -150,8 +150,9 @@ class Node(HWrapper, Translator):
         self.buildLookatRotation  = getattr(
             self.node, 'buildLookatRotation', None)
 
-    def createNode(self, type, name):
+    def createNode(self, type, name=None):
         """ """
+        name = name or uniq()
         result = self.node.createNode(type, name)
         result.moveToGoodPosition()
         result.setDisplayFlag(True)
