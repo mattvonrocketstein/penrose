@@ -52,23 +52,26 @@ def hexagon(r=hou.session.HEXAGON_RADIUS):
         poly.addVertex(point)
     poly.setIsClosed(True)
 
-def hex_module(n, m, r=hou.session.HEXAGON_RADIUS, **kwargs):
+def hex_module(n, m, name=None, parent=None, r=hou.session.HEXAGON_RADIUS, **kwargs):
     """ """
+    import hou
     import math
+    from penrose.hx.node import uniq
+    name = name or uniq()
     const = (math.sqrt(3) / 2.0)
-    _3x5 = node.Node(fxn=hexagon, into='_3x5-{}'.format(node.uniq()))
+    _3x5 = node.Node(fxn=hexagon, into=name, parent=parent)
     python1 = _3x5['python1']
-    extrude = _3x5.createNode("extrude", 'extrude-{}'.format(node.uniq()))
+    extrude = _3x5.createNode("extrude", 'extrude-{}'.format(name))
     extrude.setParms(depthscale=1)
     extrude.setInput(0, python1)
-    copy1 = _3x5.createNode("copyxform", 'copy1-{}'.format(node.uniq()))
+    copy1 = _3x5.createNode("copyxform", 'copy1-{}'.format(name))
     copy1.setInput(0, extrude)
     copy1.setParms(dict({
         'tx': 0,
         'ty': 2*const*hou.session.HEXAGON_RADIUS,
         'ncy': n,
     }))
-    copy2 = _3x5.createNode("copyxform", 'copy2-{}'.format(node.uniq()))
+    copy2 = _3x5.createNode("copyxform", 'copy2-{}'.format(name))
     copy2.setInput(0, copy1)
     tmp = dict({
         'ty': const*hou.session.HEXAGON_RADIUS,
@@ -80,29 +83,68 @@ def hex_module(n, m, r=hou.session.HEXAGON_RADIUS, **kwargs):
     color = _3x5.createNode('color')
     color.setInput(0, copy2)
     color.setParms(**kwargs.get('color',{}))
+    _3x5.setParms(kwargs.get('parms',{}))
     return _3x5
 
 n, m = 3, 5
-mod1 = hex_module(n, m, color=dict(colorr=0, colorg=0, colorb=1))
-common_parms = dict(
-    rx=0, ry=0,
-    rz=-n*geo_engine.unit,
-    ty=-hou.session.HEXAGON_RADIUS,
-    tx=-2*geo_engine.unit)
-mod1.setParms(**common_parms)
+# g1 = node.Node(into='g1')
+g1 = None
+
+base = hex_module(
+    n, m, name='base', parent=g1,
+    color=dict(colorr=0, colorg=0, colorb=1),
+    parms=dict(
+        rx=0, ry=0, rz=-30,
+        sx=1, sy=1, sz=1.5,
+        tx=-20,  ty=-hou.session.HEXAGON_RADIUS, tz=.5,))
+
+center = hex_module(
+    3, 5, name='center', parent=g1,
+    copy2=dict(ncy=2, tx=0,tz=.25, sx=.5, sy=.5, sz=.5,),
+    color=dict(colorr=0.1, colorg=0.1, colorb=0.1),
+    parms=dict(
+        sx=.75, sy=.75, sz=.75,
+        rx=0, ry=0, rz=150,
+        tx=5, ty=8, tz=1,))
 
 mod2 = hex_module(
-    3, 5,
-    copy2=dict(sx=.5, sy=.5, sz=.5,),
-    color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255))
-mod2.setParms(
-    tz=.5,
-    sx=.5, sy=.5, sz=.5,
-    **common_parms)
+    3, 5, name='mod2',
+    copy2=dict(ncy=2,tx=7.5,  ty=4.33, tz=1,  sx=1, sy=1, sz=1,),
+    color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
+    parms=dict(
+        sx=1, sy=1, sz=1,
+        rx=0, ry=0, rz=90,
+        tx=6, ty=-4.86, tz=.6,))
 
+mod3 = hex_module(
+    3, 5, name='mod3',
+    copy2=dict(ncy=2, tx=12,  ty=4.33, tz=1,  sx=1, sy=1, sz=1,),
+    color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
+    parms=dict(
+        sx=1, sy=1, sz=1,
+        rx=0, ry=0, rz=90,
+        tx=6, ty=-4.86, tz=.6,))
+
+left = hex_module(
+    3, 5, name='left',
+    copy2=dict(sx=.5, sy=.5, sz=.5,),
+    color=dict(colorr=0.5, colorg=0.5, colorb=0.5, colortype=1),
+    parms=dict(
+        sx=1, sy=1, sz=2,
+        rx=0, ry=0, rz=-30,
+        tx=-20, ty=-5, tz=1.25,))
+
+right = hex_module(
+    3, 5, name='right',
+    copy2=dict(sx=.5, sy=.5, sz=.5,),
+    color=dict(colorr=0.5, colorg=0.5, colorb=0.5, colortype=1),
+    parms=dict(
+        sx=1, sy=1, sz=2,
+        rx=0, ry=0, rz=150,
+        tx=23.33, ty=10, tz=1.25,))
 
 LOGGER.debug("setup cameras")
-cams = geo_engine.default_cameras(focus=mod1)
+cams = geo_engine.default_cameras(focus=center)
 x_cam, y_cam, z_cam = cams
 
 LOGGER.debug("adjust layout for generated objects")
