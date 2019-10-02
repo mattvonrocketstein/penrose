@@ -66,11 +66,13 @@ def hex_module(n, m, name=None, parent=None, r=hou.session.HEXAGON_RADIUS, **kwa
     extrude.setInput(0, python1)
     copy1 = _3x5.createNode("copyxform", 'copy1-{}'.format(name))
     copy1.setInput(0, extrude)
-    copy1.setParms(dict({
+    tmp=dict({
         'tx': 0,
         'ty': 2*const*hou.session.HEXAGON_RADIUS,
         'ncy': n,
-    }))
+    })
+    tmp.update(**kwargs.get('copy1',{}))
+    copy1.setParms(tmp)
     copy2 = _3x5.createNode("copyxform", 'copy2-{}'.format(name))
     copy2.setInput(0, copy1)
     tmp = dict({
@@ -94,12 +96,14 @@ base = hex_module(
     n, m, name='base', parent=g1,
     color=dict(colorr=0, colorg=0, colorb=1),
     parms=dict(
+        tx=-20,  ty=-5, tz=-.5,
         rx=0, ry=0, rz=-30,
-        sx=1, sy=1, sz=1.5,
-        tx=-20,  ty=-hou.session.HEXAGON_RADIUS, tz=.5,))
+        sx=1, sy=1, sz=1.75,
+        ))
 
 center = hex_module(
     3, 5, name='center', parent=g1,
+    copy1=dict(rz=30),
     copy2=dict(ncy=2, tx=0,tz=.25, sx=.5, sy=.5, sz=.5,),
     color=dict(colorr=0.1, colorg=0.1, colorb=0.1),
     parms=dict(
@@ -109,21 +113,21 @@ center = hex_module(
 
 mod2 = hex_module(
     3, 5, name='mod2',
-    copy2=dict(ncy=2,tx=7.5,  ty=4.33, tz=1,  sx=1, sy=1, sz=1,),
+    copy2=dict(ncy=2, tx=7.5, ty=4.33, tz=0,  sx=1, sy=1, sz=1,),
     color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
     parms=dict(
-        sx=1, sy=1, sz=1,
+        tx=6, ty=-4.86, tz=.8,
         rx=0, ry=0, rz=90,
-        tx=6, ty=-4.86, tz=.6,))
+        sx=1, sy=1, sz=1.2,))
 
 mod3 = hex_module(
     3, 5, name='mod3',
-    copy2=dict(ncy=2, tx=12,  ty=4.33, tz=1,  sx=1, sy=1, sz=1,),
+    copy2=dict(ncy=2, tx=7.5, ty=4.3, tz=0,  sx=1, sy=1, sz=1,),
     color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
     parms=dict(
-        sx=1, sy=1, sz=1,
+        tx=19, ty=2.6, tz=.8,
         rx=0, ry=0, rz=90,
-        tx=6, ty=-4.86, tz=.6,))
+        sx=1, sy=1, sz=1.2,))
 
 left = hex_module(
     3, 5, name='left',
