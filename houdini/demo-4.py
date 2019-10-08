@@ -39,8 +39,8 @@ hou.session.HEXAGON_RADIUS = geo_engine.unit / 2.0
 
 def hexagon(r=hou.session.HEXAGON_RADIUS):
     """
-    source node.
-    as a SOP, this will not get the global context..
+    source node SOP,
+    this will not get the global context..
     you might need fresh imports here
     """
     from penrose import util
@@ -92,63 +92,117 @@ n, m = 3, 5
 # g1 = node.Node(into='g1')
 g1 = None
 
-base = hex_module(
-    n, m, name='base', parent=g1,
-    color=dict(colorr=0, colorg=0, colorb=1),
-    parms=dict(
-        tx=-20,  ty=-5, tz=-.5,
-        rx=0, ry=0, rz=-30,
-        sx=1, sy=1, sz=1.75,
-        ))
+import copy
 
-center = hex_module(
-    3, 5, name='center', parent=g1,
-    copy1=dict(rz=30),
-    copy2=dict(ncy=2, tx=0,tz=.25, sx=.5, sy=.5, sz=.5,),
-    color=dict(colorr=0.1, colorg=0.1, colorb=0.1),
-    parms=dict(
-        sx=.75, sy=.75, sz=.75,
-        rx=0, ry=0, rz=150,
-        tx=5, ty=8, tz=1,))
+whole = dict(
+    base = [ (n, m),
+        dict(name='base', parent=g1,
+        color=dict(colorr=0, colorg=0, colorb=1),
+        parms=dict(
+            tx=-20,  ty=-5, tz=-.5,
+            rx=0, ry=0, rz=-30,
+            sx=1, sy=1, sz=1.75,
+            ))],
+    center = [ (3, 5),
+        dict(name='center', parent=g1,
+        copy1=dict(rz=30),
+        copy2=dict(ncy=2, tx=0,tz=.25, sx=.5, sy=.5, sz=.5,),
+        color=dict(colorr=0.1, colorg=0.1, colorb=0.1),
+        parms=dict(
+            sx=.75, sy=.75, sz=.75,
+            rx=0, ry=0, rz=150,
+            tx=5, ty=8, tz=1,))],
+    mod2 = [ (3, 5),
+        dict(name='mod2',
+        copy2=dict(ncy=2, tx=7.5, ty=4.33, tz=0,  sx=1, sy=1, sz=1,),
+        color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
+        parms=dict(
+            tx=6, ty=-4.86, tz=.8,
+            rx=0, ry=0, rz=90,
+            sx=1, sy=1, sz=1.2,))],
+    mod3 = [ (3, 5),
+        dict(name='mod3',
+        copy2=dict(ncy=2, tx=7.5, ty=4.3, tz=0,  sx=1, sy=1, sz=1,),
+        color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
+        parms=dict(
+            tx=19, ty=2.6, tz=.8,
+            rx=0, ry=0, rz=90,
+            sx=1, sy=1, sz=1.2,))],
+    left = [ (3, 4),
+        dict(name='left',
+        copy2=dict(sx=.5, sy=.5, sz=.5,),
+        color=dict(colorr=0.5, colorg=0.5, colorb=0.5, colortype=1),
+        parms=dict(
+            sx=1, sy=1, sz=2,
+            rx=0, ry=0, rz=-30,
+            tx=-20, ty=-5, tz=1.25,))],
+    right = [ (3, 4,),
+        dict(name='right',
+            copy2=dict(sx=.5, sy=.5, sz=.5,),
+            color=dict(colorr=0.5, colorg=0.5, colorb=0.5, colortype=1),
+            parms=dict(
+                sx=1, sy=1, sz=2,
+                rx=0, ry=0, rz=150,
+                tx=23.33, ty=10, tz=1.25,),),
+        ],
+    # _base = [ (n, m),
+    #     dict(name='base', parent=g1,
+    #     color=dict(colorr=0, colorg=0, colorb=1),
+    #     parms=dict(
+    #         tx=-20,  ty=-5, tz=-.5,
+    #         rx=0, ry=0, rz=-30,
+    #         sx=1, sy=1, sz=1.75,
+    #         ))],
+    # _center1 = [ (3, 5),
+    #     dict(name='center', parent=g1,
+    #     copy1=dict(rz=30),
+    #     copy2=dict(ncy=2, tx=0,tz=.25, sx=.5, sy=.5, sz=.5,),
+    #     color=dict(colorr=0.1, colorg=0.1, colorb=0.1),
+    #     parms=dict(
+    #         sx=.75, sy=.75, sz=.75,
+    #         rx=0, ry=0, rz=150,
+    #         tx=5, ty=8, tz=1,))],
+    # _mod2 = [ (3, 5),
+    #     dict(name='mod2',
+    #     copy2=dict(ncy=2, tx=7.5, ty=4.33, tz=0,  sx=1, sy=1, sz=1,),
+    #     color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
+    #     parms=dict(
+    #         tx=6, ty=-4.86, tz=.8,
+    #         rx=0, ry=0, rz=90,
+    #         sx=1, sy=1, sz=1.2,))],
+    # _mod3 = [ (3, 5),
+    #     dict(name='mod3',
+    #     copy2=dict(ncy=2, tx=7.5, ty=4.3, tz=0,  sx=1, sy=1, sz=1,),
+    #     color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
+    #     parms=dict(
+    #         tx=19, ty=2.6, tz=.8,
+    #         rx=0, ry=0, rz=90,
+    #         sx=1, sy=1, sz=1.2,))],
+    # left = [ (3, 4),
+    #     dict(name='left',
+    #     copy2=dict(sx=.5, sy=.5, sz=.5,),
+    #     color=dict(colorr=0.5, colorg=0.5, colorb=0.5, colortype=1),
+    #     parms=dict(
+    #         sx=1, sy=1, sz=2,
+    #         rx=0, ry=0, rz=-30,
+    #         tx=-20, ty=-5, tz=1.25,))],
+    # right = [ (3, 4,),
+    #     dict(name='right',
+    #         copy2=dict(sx=.5, sy=.5, sz=.5,),
+    #         color=dict(colorr=0.5, colorg=0.5, colorb=0.5, colortype=1),
+    #         parms=dict(
+    #             sx=1, sy=1, sz=2,
+    #             rx=0, ry=0, rz=150,
+    #             tx=23.33, ty=10, tz=1.25,),),
+    )
 
-mod2 = hex_module(
-    3, 5, name='mod2',
-    copy2=dict(ncy=2, tx=7.5, ty=4.33, tz=0,  sx=1, sy=1, sz=1,),
-    color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
-    parms=dict(
-        tx=6, ty=-4.86, tz=.8,
-        rx=0, ry=0, rz=90,
-        sx=1, sy=1, sz=1.2,))
-
-mod3 = hex_module(
-    3, 5, name='mod3',
-    copy2=dict(ncy=2, tx=7.5, ty=4.3, tz=0,  sx=1, sy=1, sz=1,),
-    color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
-    parms=dict(
-        tx=19, ty=2.6, tz=.8,
-        rx=0, ry=0, rz=90,
-        sx=1, sy=1, sz=1.2,))
-
-left = hex_module(
-    3, 5, name='left',
-    copy2=dict(sx=.5, sy=.5, sz=.5,),
-    color=dict(colorr=0.5, colorg=0.5, colorb=0.5, colortype=1),
-    parms=dict(
-        sx=1, sy=1, sz=2,
-        rx=0, ry=0, rz=-30,
-        tx=-20, ty=-5, tz=1.25,))
-
-right = hex_module(
-    3, 5, name='right',
-    copy2=dict(sx=.5, sy=.5, sz=.5,),
-    color=dict(colorr=0.5, colorg=0.5, colorb=0.5, colortype=1),
-    parms=dict(
-        sx=1, sy=1, sz=2,
-        rx=0, ry=0, rz=150,
-        tx=23.33, ty=10, tz=1.25,))
+for module_name, component in whole.items():
+    print 'building module "{}":\n  -> {}'.format(module_name, component)
+    args, kargs = component
+    whole[module_name] = hex_module(*args, **kargs)
 
 LOGGER.debug("setup cameras")
-cams = geo_engine.default_cameras(focus=center)
+cams = geo_engine.default_cameras(focus=whole['center'])
 x_cam, y_cam, z_cam = cams
 
 LOGGER.debug("adjust layout for generated objects")
