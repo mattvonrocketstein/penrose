@@ -61,12 +61,23 @@ def hex_module(n, m, name=None, parent=None, r=hou.session.HEXAGON_RADIUS, **kwa
     const = (math.sqrt(3) / 2.0)
     _3x5 = node.Node(fxn=hexagon, into=name, parent=parent)
     python1 = _3x5['python1']
-    extrude = _3x5.createNode("extrude", 'extrude-{}'.format(name))
-    extrude.setParms(depthscale=1)
-    extrude.setInput(0, python1)
     copy1 = _3x5.createNode("copyxform", 'copy1-{}'.format(name))
-    copy1.setInput(0, extrude)
-    tmp=dict({
+    # extrude.setInput(0, python1)
+    # copy1.setInput(0, extrude)
+    # extrude = _3x5.createNode("extrude", 'extrude-{}'.format(name))
+    # extrude.setParms(depthscale=1)
+    pext = _3x5.createNode("polyextrude", 'pext-{}'.format(name))
+    pext.setInput(0, python1)
+    copy1.setInput(0, pext)
+    tmp = dict(dist=1)
+    # pext.setParms(**tmp)
+    tmp.update(**kwargs.get('pext', {}))
+    pext.setParms(**tmp)
+    # pext.setParms(twist=.1)
+    # pext.setParms(inset=.1)
+    # pext.setInput(0, _3x5['extrude'])
+    # pext.setInput(0, extrude)
+    tmp = dict({
         'tx': 0,
         'ty': 2*const*hou.session.HEXAGON_RADIUS,
         'ncy': n,
@@ -107,21 +118,22 @@ whole = dict(
         dict(name='center', parent=g1,
         copy1=dict(rz=30),
         copy2=dict(ncy=2, tx=0,tz=.25, sx=.5, sy=.5, sz=.5,),
+        pext=dict(dist=-1.5),
         color=dict(colorr=0.1, colorg=0.1, colorb=0.1),
         parms=dict(
             sx=.75, sy=.75, sz=.75,
             rx=0, ry=0, rz=150,
-            tx=5, ty=8, tz=1,))],
-    mod2 = [ (3, 5),
-        dict(name='mod2',
+            tx=5, ty=8, tz=-1,))],
+    bcenter = [ (3, 5),
+        dict(name='bcenter',
         copy2=dict(ncy=2, tx=7.5, ty=4.33, tz=0,  sx=1, sy=1, sz=1,),
         color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
         parms=dict(
             tx=6, ty=-4.86, tz=.8,
             rx=0, ry=0, rz=90,
             sx=1, sy=1, sz=1.2,))],
-    mod3 = [ (3, 5),
-        dict(name='mod3',
+    tcenter = [ (3, 5),
+        dict(name='tcenter',
         copy2=dict(ncy=2, tx=7.5, ty=4.3, tz=0,  sx=1, sy=1, sz=1,),
         color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
         parms=dict(
@@ -162,8 +174,8 @@ whole = dict(
     #         sx=.75, sy=.75, sz=.75,
     #         rx=0, ry=0, rz=150,
     #         tx=5, ty=8, tz=1,))],
-    # _mod2 = [ (3, 5),
-    #     dict(name='mod2',
+    # _bcenter = [ (3, 5),
+    #     dict(name='bcenter',
     #     copy2=dict(ncy=2, tx=7.5, ty=4.33, tz=0,  sx=1, sy=1, sz=1,),
     #     color=dict(colorr=0.937255, colorg=0.937255, colorb=0.937255),
     #     parms=dict(
