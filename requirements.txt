@@ -18,5 +18,5 @@ solid
 # 'click==6.6',
 # 'repoze.lru == 0.7',
 IPython
-rrpyc
+#rrpyc
 pygments
