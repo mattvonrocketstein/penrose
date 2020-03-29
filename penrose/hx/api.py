@@ -34,25 +34,25 @@ def test(file=None, **kwargs):
     if errors:
         raise RuntimeError(errors)
         # return errors
-
-
+        
+        
 def houdini(engine=None, file=None, verbose=False, **kargs):
     """
     houdini cli wrapper
     """
     assert os.path.exists(file), 'missing file: {}'.format(file)
     ENGINE.init()
-    LOGGER.debug("starting syslog listener")
-    from penrose.bin.pysyslogd import main
-    import multiprocessing
-    proc = multiprocessing.Process(target=main)
-    proc.start()
-    LOGGER.debug("done starting syslog listener")
-
+    # LOGGER.debug("starting syslog listener")
+    # from penrose.bin.pysyslogd import main
+    # import multiprocessing
+    # proc = multiprocessing.Process(target=main)
+    # proc.start()
+    # LOGGER.debug("done starting syslog listener")
+    
     ENGINE.exec_script(file=file)
     remote_modules = ENGINE.import_remote_modules()
     namespace = locals().copy()
-
+    
     namespace.update(
         conn=ENGINE.conn,
         remote_modules=remote_modules)
@@ -73,4 +73,5 @@ def houdini(engine=None, file=None, verbose=False, **kargs):
         namespace.update({k: v})
     import IPython
     IPython.embed(user_ns=namespace)
-    proc.terminate()
+    # proc.terminate()
+    

@@ -8,7 +8,7 @@ import uuid
 from penrose import (
     # abcs,
     util,)
-
+    
 import hou
 
 LOGGER = util.get_logger(__name__)
@@ -22,32 +22,32 @@ class Translator(object):
         self.node.setParmTransform(
             hou.hmath.buildTranslate(
                 unit, 0, 0))
-
+                
     def left(self, unit):
         return self.right(-unit)
-
+        
     def up(self, unit):
         self.node.setParmTransform(
             hou.hmath.buildTranslate(
                 0, unit, 0))
-
+                
     def down(self, unit):
         return self.up(-unit)
-
+        
     def inwards(self, unit):
         self.node.setParmTransform(
             hou.hmath.buildTranslate(
                 0, 0, unit))
     def outwards(self, unit):
         return self.inwards(-unit)
-
+        
 class Node(HWrapper, Translator):
 
     @util.memoized
     @staticmethod
     def get_root():
         return HTree().root
-
+        
     @staticmethod
     def create(under=None, type='geo', into=None, **kwargs):
         assert type is not None
@@ -56,7 +56,7 @@ class Node(HWrapper, Translator):
         node.setName(into)
         node.moveToGoodPosition()
         return node
-
+        
     @property
     def local_geometry(self):
         """
@@ -68,7 +68,7 @@ class Node(HWrapper, Translator):
             g = node.children()[0].geometry
         g  = g()
         return g
-
+        
     def point(self, *position):
         """
         """
@@ -91,18 +91,18 @@ class Node(HWrapper, Translator):
     def bbox(self):
         """ """
         return self.local_geometry.boundingBox()
-
+        
     def __getitem__(self, name):
         """ """
         return [ ch for ch in self.children() if ch.name == name ][0]
-
+        
     def __str__(self):
         """ """
         return '<{}:{}>'.format(
             self.__class__.__name__,
             self.name)
     __repr__ = __str__
-
+    
     def __init__(self, code=None, fxn=None, **kwargs):
         """ """
         def get_node():
@@ -125,7 +125,7 @@ class Node(HWrapper, Translator):
                 created = False
                 node = old_node
             return node
-
+            
         self.create_kwargs = kwargs
         self.copy_count = 0
         self.node  = kwargs.pop('node', None ) or get_node()
@@ -149,30 +149,35 @@ class Node(HWrapper, Translator):
             self.node, 'setWorldTransform', None)
         self.buildLookatRotation  = getattr(
             self.node, 'buildLookatRotation', None)
-
-    def createNode(self, type, name=None):
+    def setName(self, *args):
+        return self.node.setName(*args)
+        
+    def moveToGoodPosition(self, *args):
+        return self.node.moveToGoodPosition(*args)
+        
+    def createNode(self, type, name=None, **kwargs):
         """ """
         name = name or uniq()
-        result = self.node.createNode(type, name)
+        result = self.node.createNode(type, name, **kwargs)
         result.moveToGoodPosition()
         result.setDisplayFlag(True)
         return self.__class__(node=result)
-
+        
     def setInput(self, index, node):
         """ """
         if isinstance(node.node, (hou.Node, )):
             node = node.node
         self.node.setInput(index, node)
-
+        
     @property
     def parms(self):
         class Parms(object):
             def __init__(self, parent):
                 self.parent=parent
-
+                
             def __repr__(self):
                 return "<NodeParms: {}..>".format(str(self.as_dict)[:10])
-
+                
             str__=__repr__
             @property
             def as_dict(self):
@@ -186,25 +191,26 @@ class Node(HWrapper, Translator):
             def __setitem__(self,name,val):
                 return self.parent.setParms({name:val})
         return Parms(self)
-
+        
     def setParms(self, *args, **kargs):
         """ """
         pdict = args and args[0]
         pdict = pdict or {}
         pdict.update(**kargs)
         return self.node.setParms(pdict)
-
+        
     def children(self):
         """ """
         return [
             self.__class__(node=node) for node in self.node.children()
         ]
-
+        
     @property
     def name(self):
         """ """
-        return self.node.name()
-
+        tmp = self.node.name
+        return tmp() if callable(tmp) else tmp
+        
     def copy(self, under=None, into=None):
         """ """
         self.copy_count += 1
@@ -223,7 +229,7 @@ class Node(HWrapper, Translator):
         copy.moveToGoodPosition()
         copy.setName(into)
         return self.__class__(node=copy)
-
+        
 class NodeArray(HWrapper, list):
 
     def __init__(self, *nodes, **kwargs):
@@ -238,7 +244,7 @@ class NodeArray(HWrapper, list):
         self.name = self.container and self.container.name
         self.name = self.name or uniq()
         HWrapper.__init__(self)
-
+        
     @classmethod
     def create_from(cls, obj, count=1, use_original=True, **kwargs):
         """ """
@@ -247,7 +253,7 @@ class NodeArray(HWrapper, list):
             obj.copy(into='{}-{}'.format(obj.name, i)) for i in range(count)
         ]
         return cls(*all, **kwargs)
-
+        
     def copy(self, container=None):
         """ """
         all = [
@@ -261,16 +267,16 @@ class NodeArray(HWrapper, list):
         kwargs = dict(container=container)
         tmp = self.__class__(*all, **kwargs)
         return tmp
-
+        
     def map(self, fxn):
         return [ fxn(x) for x in self ]
-
+        
     def map_enum(self, fxn):
         return [ fxn(i, x) for i,x in enumerate(self) ]
-
+        
     def set_input(self, container):
         self.map(lambda x: x.node.setNextInput(container.node))
-
+        
 #     def set_input(self, umbrella):
 #         # for x, row in enumerate(node_group):
 #         #     for y, _node in enumerate(node_group):
