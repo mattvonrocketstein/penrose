@@ -125,11 +125,7 @@ def memoized(fxn):
     """
     memoized/cache decorator for expensive computations
     """
-    try:
-        return functools.lru_cache(64)(fxn)
-    except:
-        import backports.functools_lru_cache
-        return backports.functools_lru_cache.lru_cache(64)(fxn)
+    return fxn
 
 def memoized_property(fxn):
     """ memoized/caching property decorator """

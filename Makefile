@@ -28,6 +28,9 @@ normalize:
 	| grep [.]py$ \
 	| xargs autopep8 --in-place
 
+install: clean
+	pip install -r requirements.txt \
+	&& python setup.py develop
 
 clean-pyc:
 	find .|grep [.]pyc|xargs rm
